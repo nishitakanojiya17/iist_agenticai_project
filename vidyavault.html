@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VidyaVault — AI Document Intelligence · IIST</title>
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — Light Professional
+   Font: Times New Roman (serif)
+   Palette: Ivory + Navy + Gold + Slate
+═══════════════════════════════════════════════ */
+:root {
+  --white: #ffffff;
+  --ivory: #faf9f6;
+  --ivory2: #f4f2ed;
+  --cream: #ede9e0;
+  --navy: #1a2744;
+  --navy2: #243258;
+  --navy3: #2e3f6e;
+  --gold: #b8913a;
+  --gold2: #d4a84b;
+  --gold-light: #f5e6c8;
+  --slate: #5a6480;
+  --slate2: #8391b0;
+  --green: #2d7a4f;
+  --green-bg: #eaf4ee;
+  --red: #c0392b;
+  --red-bg: #fdecea;
+  --amber: #b86a1a;
+  --amber-bg: #fef3e2;
+  --border: #ddd8ce;
+  --border2: #ccc6bb;
+  --shadow-sm: 0 1px 3px rgba(26,39,68,0.08), 0 1px 2px rgba(26,39,68,0.05);
+  --shadow: 0 4px 16px rgba(26,39,68,0.10), 0 1px 4px rgba(26,39,68,0.06);
+  --shadow-lg: 0 12px 40px rgba(26,39,68,0.14), 0 4px 12px rgba(26,39,68,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Times New Roman', Times, serif;
+  background: var(--ivory);
+  color: var(--navy);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* ── Page management ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ════════════════════════════
+   LANDING PAGE
+════════════════════════════ */
+
+/* NAV */
+.land-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(250,249,246,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 60px;
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+.land-nav-logo {
+  display: flex; align-items: center; gap: 12px;
+}
+.nav-emblem {
+  width: 40px; height: 40px;
+  background: var(--navy);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold2); font-size: 1.1rem; font-weight: bold;
+  letter-spacing: -1px;
+}
+.nav-brand { font-size: 1.2rem; font-weight: bold; color: var(--navy); letter-spacing: 0.3px; }
+.nav-brand span { color: var(--gold); }
+.nav-tagline { font-size: 0.7rem; color: var(--slate2); font-style: italic; margin-top: -2px; }
+
+.land-nav-links { display: flex; align-items: center; gap: 32px; }
+.land-nav-links a {
+  color: var(--slate); font-size: 0.9rem; text-decoration: none;
+  transition: color .15s; font-style: italic;
+}
+.land-nav-links a:hover { color: var(--navy); }
+.nav-login-btn {
+  background: var(--navy); color: var(--white) !important;
+  padding: 9px 24px; border-radius: 4px;
+  font-style: normal !important; font-weight: bold;
+  font-size: 0.875rem !important; cursor: pointer;
+  transition: background .15s, transform .15s;
+  border: none; text-decoration: none;
+}
+.nav-login-btn:hover { background: var(--navy2) !important; transform: translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy2) 50%, #1e3060 100%);
+  display: flex; align-items: center;
+  position: relative; overflow: hidden;
+  padding-top: 68px;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(255,255,255,0.025) 60px),
+    repeating-linear-gradient(90deg, transparent, transparent 59px, rgba(255,255,255,0.025) 60px);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -100px; top: 50%; transform: translateY(-50%);
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,145,58,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner {
+  max-width: 1200px; margin: 0 auto;
+  padding: 80px 60px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(184,145,58,0.15); border: 1px solid rgba(184,145,58,0.35);
+  color: var(--gold2); padding: 6px 16px; border-radius: 2px;
+  font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-title {
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+  font-weight: bold; color: #fff;
+  line-height: 1.15; margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+.hero-title em { color: var(--gold2); font-style: italic; }
+.hero-subtitle {
+  font-size: 1.05rem; color: rgba(255,255,255,0.7);
+  line-height: 1.75; margin-bottom: 36px; font-style: italic;
+}
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-hero-primary {
+  background: var(--gold); color: var(--white);
+  padding: 14px 32px; border-radius: 4px;
+  font-family: 'Times New Roman', serif; font-size: 1rem; font-weight: bold;
+  border: none; cursor: pointer; transition: all .18s;
+  text-decoration: none; display: inline-block;
+}
+.btn-hero-primary:hover { background: var(--gold2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184,145,58,0.4); }
+.btn-hero-secondary {
+  background: transparent; color: rgba(255,255,255,0.85);
+  padding: 14px 32px; border-radius: 4px;
+  font-family: 'Times New Roman', serif; font-size: 1rem;
+  border: 1px solid rgba(255,255,255,0.3); cursor: pointer; transition: all .18s;
+  text-decoration: none; display: inline-block; font-style: italic;
+}
+.btn-hero-secondary:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* Hero card */
+.hero-visual {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px; padding: 28px;
+  backdrop-filter: blur(4px);
+}
+.hero-card-title { color: rgba(255,255,255,0.5); font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+.hero-search-mock {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+}
+.hero-search-mock span { color: rgba(255,255,255,0.4); font-style: italic; font-size: 0.9rem; }
+.hero-result-item {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px; padding: 14px 16px; margin-bottom: 10px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.result-icon-mock {
+  width: 36px; height: 36px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.result-title-mock { color: rgba(255,255,255,0.85); font-size: 0.875rem; font-weight: bold; margin-bottom: 4px; }
+.result-meta-mock { color: rgba(255,255,255,0.4); font-size: 0.72rem; font-style: italic; }
+.result-badge-mock {
+  margin-left: auto; font-size: 0.65rem; font-weight: bold; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 2px; letter-spacing: 0.5px; flex-shrink: 0;
+}
+
+/* STATS STRIP */
+.stats-strip {
+  background: var(--white); border-top: 3px solid var(--gold);
+  border-bottom: 1px solid var(--border);
+  padding: 36px 60px;
+}
+.stats-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 40px;
+  text-align: center;
+}
+.stat-num { font-size: 2.4rem; font-weight: bold; color: var(--navy); line-height: 1; }
+.stat-num span { color: var(--gold); }
+.stat-label { font-size: 0.8rem; color: var(--slate); margin-top: 6px; font-style: italic; letter-spacing: 0.5px; }
+
+/* FEATURES */
+.features-section {
+  padding: 96px 60px;
+  background: var(--ivory);
+}
+.section-label {
+  text-align: center; color: var(--gold); font-size: 0.72rem;
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+}
+.section-title {
+  text-align: center; font-size: 2.2rem; font-weight: bold;
+  color: var(--navy); margin-bottom: 12px; line-height: 1.25;
+}
+.section-sub { text-align: center; color: var(--slate); font-style: italic; font-size: 1rem; margin-bottom: 64px; }
+
+.features-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 32px;
+}
+.feature-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 32px 28px;
+  transition: box-shadow .2s, transform .2s;
+  border-top: 3px solid transparent;
+}
+.feature-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); border-top-color: var(--gold); }
+.feature-icon {
+  width: 52px; height: 52px; background: var(--ivory2);
+  border: 1px solid var(--border); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; margin-bottom: 20px;
+}
+.feature-title { font-size: 1.1rem; font-weight: bold; color: var(--navy); margin-bottom: 10px; }
+.feature-desc { font-size: 0.875rem; color: var(--slate); line-height: 1.7; font-style: italic; }
+
+/* HOW IT WORKS */
+.how-section {
+  background: var(--navy);
+  padding: 96px 60px;
+}
+.how-inner { max-width: 1200px; margin: 0 auto; }
+.how-section .section-title { color: var(--white); }
+.how-section .section-label { color: var(--gold2); }
+.how-section .section-sub { color: rgba(255,255,255,0.6); }
+.steps-row {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 0;
+  position: relative; margin-top: 48px;
+}
+.steps-row::before {
+  content: '';
+  position: absolute; top: 36px; left: calc(100%/6); right: calc(100%/6);
+  height: 1px; background: rgba(184,145,58,0.4);
+}
+.step-item { text-align: center; padding: 0 24px; }
+.step-num {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--gold); color: var(--white);
+  font-size: 1.4rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; position: relative; z-index: 1;
+  box-shadow: 0 4px 16px rgba(184,145,58,0.4);
+}
+.step-title { color: var(--white); font-weight: bold; font-size: 1rem; margin-bottom: 8px; }
+.step-desc { color: rgba(255,255,255,0.55); font-size: 0.855rem; font-style: italic; line-height: 1.6; }
+
+/* ROLES */
+.roles-section { padding: 96px 60px; background: var(--ivory2); }
+.roles-grid { max-width: 1200px; margin: 48px auto 0; display: grid; grid-template-columns: repeat(3,1fr); gap: 28px; }
+.role-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  transition: box-shadow .2s, transform .2s;
+}
+.role-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+.role-card-header { padding: 28px 28px 20px; border-bottom: 1px solid var(--border); }
+.role-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 2px;
+  font-size: 0.68rem; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.badge-student { background: var(--green-bg); color: var(--green); }
+.badge-faculty { background: var(--amber-bg); color: var(--amber); }
+.badge-admin { background: rgba(26,39,68,0.08); color: var(--navy); }
+.role-name { font-size: 1.3rem; font-weight: bold; color: var(--navy); }
+.role-desc { color: var(--slate); font-size: 0.855rem; font-style: italic; margin-top: 6px; }
+.role-card-body { padding: 20px 28px 24px; }
+.role-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.role-features li {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 0.855rem; color: var(--slate);
+}
+.role-features li::before { content: '✓'; color: var(--gold); font-weight: bold; flex-shrink: 0; margin-top: 1px; }
+.role-card-footer { padding: 0 28px 28px; }
+.btn-role {
+  width: 100%; padding: 11px; border-radius: 4px;
+  font-family: 'Times New Roman', serif; font-size: 0.925rem; font-weight: bold;
+  cursor: pointer; transition: all .18s; border: 2px solid var(--navy);
+  background: transparent; color: var(--navy);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-role:hover { background: var(--navy); color: var(--white); }
+.btn-role.primary { background: var(--navy); color: var(--white); }
+.btn-role.primary:hover { background: var(--navy2); }
+
+/* FOOTER */
+.land-footer {
+  background: var(--navy); color: rgba(255,255,255,0.6);
+  padding: 48px 60px 28px;
+}
+.footer-inner { max-width: 1200px; margin: 0 auto; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+.footer-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.footer-logo-text { color: var(--white); font-size: 1.15rem; font-weight: bold; }
+.footer-about { font-size: 0.82rem; font-style: italic; line-height: 1.7; }
+.footer-col-title { color: var(--gold2); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; font-style: normal; }
+.footer-col a { display: block; color: rgba(255,255,255,0.55); font-size: 0.82rem; text-decoration: none; margin-bottom: 8px; transition: color .15s; font-style: italic; }
+.footer-col a:hover { color: var(--gold2); }
+.footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-style: italic; }
+
+
+/* ════════════════════════════
+   LOGIN PAGE
+════════════════════════════ */
+.login-view {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+.login-left {
+  background: linear-gradient(160deg, var(--navy) 0%, #1e3566 100%);
+  padding: 60px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.login-left::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 40px);
+}
+.login-left-inner { position: relative; z-index: 1; max-width: 420px; }
+.login-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 56px; }
+.login-logo-emblem {
+  width: 44px; height: 44px; background: var(--gold);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  color: var(--white); font-weight: bold; font-size: 1.1rem;
+}
+.login-logo-text { color: var(--white); font-size: 1.25rem; font-weight: bold; }
+.login-logo-text span { color: var(--gold2); }
+
+.login-left h2 { font-size: 2.2rem; color: var(--white); font-weight: bold; margin-bottom: 16px; line-height: 1.2; }
+.login-left h2 em { color: var(--gold2); }
+.login-left p { color: rgba(255,255,255,0.6); font-style: italic; font-size: 0.95rem; line-height: 1.7; margin-bottom: 40px; }
+
+.login-feature-list { display: flex; flex-direction: column; gap: 14px; }
+.login-feature { display: flex; align-items: center; gap: 12px; }
+.login-feature-icon {
+  width: 36px; height: 36px; background: rgba(184,145,58,0.15);
+  border: 1px solid rgba(184,145,58,0.3); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;
+}
+.login-feature-text { color: rgba(255,255,255,0.75); font-size: 0.875rem; font-style: italic; }
+
+.login-right {
+  background: var(--ivory); padding: 60px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.login-card {
+  width: 100%; max-width: 420px;
+}
+.login-card-header { text-align: center; margin-bottom: 36px; }
+.login-card-header h3 { font-size: 1.7rem; font-weight: bold; color: var(--navy); margin-bottom: 6px; }
+.login-card-header p { color: var(--slate); font-style: italic; font-size: 0.9rem; }
+
+/* Role tabs */
+.role-tabs {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  background: var(--ivory2); border-radius: 4px; padding: 4px;
+  margin-bottom: 28px; border: 1px solid var(--border);
+}
+.role-tab {
+  padding: 10px 8px; text-align: center; border-radius: 2px;
+  cursor: pointer; font-size: 0.82rem; font-weight: bold;
+  color: var(--slate2); transition: all .18s; font-family: 'Times New Roman', serif;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.role-tab span { font-size: 1.1rem; }
+.role-tab.active { background: var(--white); color: var(--navy); box-shadow: var(--shadow-sm); }
+
+.form-field { margin-bottom: 18px; }
+.form-field label { display: block; font-size: 0.82rem; font-weight: bold; color: var(--navy); margin-bottom: 6px; letter-spacing: 0.2px; }
+.form-field input, .form-field select {
+  width: 100%; background: var(--white); border: 1px solid var(--border2);
+  border-radius: 4px; color: var(--navy);
+  font-family: 'Times New Roman', serif; font-size: 0.925rem;
+  padding: 12px 16px; outline: none; transition: border-color .18s, box-shadow .18s;
+}
+.form-field input:focus, .form-field select:focus {
+  border-color: var(--navy); box-shadow: 0 0 0 3px rgba(26,39,68,0.08);
+}
+
+.form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.form-check { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--slate); }
+.form-link { font-size: 0.82rem; color: var(--gold); font-style: italic; cursor: pointer; }
+.form-link:hover { color: var(--navy); }
+
+.btn-login {
+  width: 100%; background: var(--navy); color: var(--white);
+  padding: 14px; border-radius: 4px; border: none;
+  font-family: 'Times New Roman', serif; font-size: 1rem; font-weight: bold;
+  cursor: pointer; transition: all .18s; letter-spacing: 0.3px;
+}
+.btn-login:hover { background: var(--navy2); box-shadow: 0 4px 16px rgba(26,39,68,0.25); transform: translateY(-1px); }
+
+.login-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.login-divider span { font-size: 0.78rem; color: var(--slate2); font-style: italic; }
+
+.login-back { display: flex; align-items: center; gap: 6px; color: var(--slate); font-size: 0.82rem; cursor: pointer; margin-top: 24px; font-style: italic; }
+.login-back:hover { color: var(--navy); }
+
+
+/* ════════════════════════════
+   SHARED DASHBOARD CHROME
+════════════════════════════ */
+.dash-layout { display: flex; min-height: 100vh; }
+
+.dash-sidebar {
+  width: 256px; flex-shrink: 0;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.dash-sidebar-top {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.dash-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.dash-logo-box {
+  width: 36px; height: 36px; background: var(--gold);
+  border-radius: 3px; display: flex; align-items: center; justify-content: center;
+  font-weight: bold; color: var(--white); font-size: 0.9rem;
+}
+.dash-logo-name { color: var(--white); font-weight: bold; font-size: 1rem; }
+.dash-logo-name span { color: var(--gold2); }
+
+.dash-user-card {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px; padding: 12px 14px;
+}
+.dash-user-name { color: var(--white); font-weight: bold; font-size: 0.875rem; }
+.dash-user-role {
+  font-size: 0.68rem; font-weight: bold; text-transform: uppercase;
+  letter-spacing: 1px; margin-top: 3px;
+}
+.role-color-student { color: #5dca8a; }
+.role-color-faculty { color: var(--gold2); }
+.role-color-admin { color: #7db4f7; }
+
+.dash-nav { flex: 1; padding: 16px 0; }
+.dash-nav-section { padding: 0 20px 6px; }
+.dash-nav-label { font-size: 0.62rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 10px 0 6px; }
+.dash-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 4px; cursor: pointer;
+  color: rgba(255,255,255,0.55); font-size: 0.855rem;
+  transition: all .15s; margin-bottom: 2px; font-style: italic;
+  border: 1px solid transparent;
+}
+.dash-nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.dash-nav-item.active { background: rgba(184,145,58,0.15); color: var(--gold2); border-color: rgba(184,145,58,0.2); font-style: normal; font-weight: bold; }
+.dash-nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+.dash-nav-badge {
+  margin-left: auto; background: var(--gold); color: var(--white);
+  font-size: 0.6rem; font-weight: bold; padding: 2px 6px; border-radius: 2px; font-style: normal;
+}
+
+.dash-sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.btn-logout {
+  width: 100%; background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.3);
+  color: #e87c6e; padding: 9px; border-radius: 4px;
+  font-family: 'Times New Roman', serif; font-size: 0.82rem; cursor: pointer;
+  transition: all .15s;
+}
+.btn-logout:hover { background: rgba(192,57,43,0.25); }
+
+.dash-main { flex: 1; background: var(--ivory); overflow-y: auto; }
+
+.dash-topbar {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 36px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10;
+  box-shadow: var(--shadow-sm);
+}
+.dash-topbar-title { font-size: 1.05rem; font-weight: bold; color: var(--navy); }
+.dash-topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-date { font-size: 0.78rem; color: var(--slate); font-style: italic; }
+.topbar-notif {
+  width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--slate); transition: all .15s; position: relative;
+}
+.topbar-notif:hover { border-color: var(--navy); color: var(--navy); }
+.notif-dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--red);
+  border: 2px solid var(--white);
+}
+
+.dash-content { padding: 36px; }
+.dash-page { display: none; animation: fadeIn .25s ease; }
+.dash-page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.content-header { margin-bottom: 28px; }
+.content-title { font-size: 1.6rem; font-weight: bold; color: var(--navy); margin-bottom: 4px; }
+.content-sub { color: var(--slate); font-style: italic; font-size: 0.9rem; }
+
+/* ── KPI cards ── */
+.kpi-grid { display: grid; gap: 20px; margin-bottom: 28px; }
+.kpi-grid-4 { grid-template-columns: repeat(4,1fr); }
+.kpi-grid-3 { grid-template-columns: repeat(3,1fr); }
+.kpi-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 22px 24px;
+  border-left: 3px solid var(--gold);
+  transition: box-shadow .2s;
+}
+.kpi-card:hover { box-shadow: var(--shadow); }
+.kpi-label { font-size: 0.72rem; color: var(--slate); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-style: normal; }
+.kpi-value { font-size: 2rem; font-weight: bold; color: var(--navy); line-height: 1; }
+.kpi-change { font-size: 0.78rem; margin-top: 6px; font-style: italic; }
+.kpi-up { color: var(--green); }
+.kpi-down { color: var(--red); }
+.kpi-neutral { color: var(--slate); }
+
+/* ── Cards ── */
+.card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  padding: 18px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 1rem; font-weight: bold; color: var(--navy); }
+.card-body { padding: 24px; }
+
+/* ── Search bar ── */
+.search-field {
+  position: relative; margin-bottom: 20px;
+}
+.search-field input {
+  width: 100%; background: var(--white); border: 1px solid var(--border2);
+  border-radius: 4px; color: var(--navy);
+  font-family: 'Times New Roman', serif; font-size: 0.95rem;
+  padding: 13px 20px 13px 46px; outline: none; transition: border-color .18s, box-shadow .18s;
+}
+.search-field input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(26,39,68,0.08); }
+.search-field::before { content: '🔍'; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; }
+
+/* ── Filters row ── */
+.filter-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-select {
+  background: var(--white); border: 1px solid var(--border2);
+  border-radius: 4px; color: var(--navy);
+  font-family: 'Times New Roman', serif; font-size: 0.855rem;
+  padding: 9px 14px; cursor: pointer; outline: none;
+}
+
+/* ── AI Answer Box ── */
+.ai-box {
+  background: linear-gradient(135deg, rgba(26,39,68,0.04), rgba(184,145,58,0.05));
+  border: 1px solid rgba(184,145,58,0.3);
+  border-left: 3px solid var(--gold);
+  border-radius: 6px; padding: 20px 24px; margin-bottom: 24px;
+}
+.ai-box-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  font-size: 0.72rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; font-weight: bold; font-style: normal;
+}
+.ai-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+.ai-box-text { font-size: 0.925rem; color: var(--navy); line-height: 1.75; font-style: italic; }
+.ai-cite { color: var(--gold); font-weight: bold; font-style: normal; }
+
+/* ── Document table ── */
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; font-size: 0.7rem; color: var(--slate);
+  text-transform: uppercase; letter-spacing: 1px; font-style: normal;
+  padding: 11px 20px; background: var(--ivory); border-bottom: 2px solid var(--border);
+}
+td { padding: 13px 20px; font-size: 0.875rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--ivory); }
+
+/* ── Badges ── */
+.badge {
+  font-size: 0.65rem; font-weight: bold; letter-spacing: 0.8px;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 2px;
+}
+.badge-qpaper { background: var(--green-bg); color: var(--green); }
+.badge-syllabus { background: var(--amber-bg); color: var(--amber); }
+.badge-circular { background: rgba(26,39,68,0.08); color: var(--navy); }
+.badge-cert { background: rgba(184,145,58,0.12); color: var(--gold); }
+.badge-active { background: var(--green-bg); color: var(--green); }
+.badge-archived { background: var(--ivory2); color: var(--slate); }
+
+/* ── Confidence bar ── */
+.conf-wrap { display: flex; align-items: center; gap: 8px; }
+.conf-bar { flex: 1; height: 5px; background: var(--ivory2); border-radius: 3px; min-width: 60px; }
+.conf-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), var(--green)); }
+.conf-pct { font-size: 0.72rem; color: var(--green); font-weight: bold; min-width: 30px; }
+
+/* ── Action buttons ── */
+.action-btns { display: flex; gap: 6px; }
+.btn-sm {
+  padding: 6px 12px; border-radius: 3px; font-size: 0.75rem; font-weight: bold;
+  cursor: pointer; transition: all .15s; font-family: 'Times New Roman', serif;
+  border: 1px solid var(--border2); background: var(--white); color: var(--navy);
+  display: flex; align-items: center; gap: 4px;
+}
+.btn-sm:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.btn-sm.gold { background: var(--gold); color: var(--white); border-color: var(--gold); }
+.btn-sm.gold:hover { background: #9a7a2e; }
+
+/* ── Version timeline ── */
+.version-timeline { position: relative; padding-left: 40px; }
+.version-timeline::before { content: ''; position: absolute; left: 18px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+.vtl-item { position: relative; margin-bottom: 24px; }
+.vtl-dot {
+  position: absolute; left: -31px; top: 6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--white); border: 2px solid var(--border); z-index: 1;
+}
+.vtl-dot.current { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 10px rgba(184,145,58,0.4); }
+.vtl-card {
+  background: var(--white); border: 1px solid var(--border); border-radius: 4px; padding: 16px 20px;
+  transition: box-shadow .15s;
+}
+.vtl-card:hover { box-shadow: var(--shadow); }
+.vtl-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.vtl-tag { font-weight: bold; font-size: 0.925rem; color: var(--navy); }
+.vtl-meta { font-size: 0.78rem; color: var(--slate); font-style: italic; }
+.vtl-desc { font-size: 0.82rem; color: var(--slate); margin-top: 8px; font-style: italic; }
+.vtl-actions { margin-top: 12px; display: flex; gap: 8px; }
+
+/* ── Upload ── */
+.dropzone {
+  background: var(--white); border: 2px dashed var(--border2);
+  border-radius: 6px; padding: 48px; text-align: center;
+  cursor: pointer; transition: all .2s; margin-bottom: 24px;
+}
+.dropzone:hover, .dropzone.over { border-color: var(--gold); background: var(--gold-light); }
+.dropzone-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.dropzone h3 { font-size: 1.1rem; color: var(--navy); font-weight: bold; margin-bottom: 6px; }
+.dropzone p { color: var(--slate); font-style: italic; font-size: 0.855rem; }
+
+/* ── Bar chart ── */
+.bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 120px; padding-bottom: 4px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; }
+.bar-wrap { flex: 1; display: flex; align-items: flex-end; width: 100%; gap: 3px; }
+.bar { flex: 1; border-radius: 2px 2px 0 0; min-height: 4px; cursor: pointer; transition: opacity .15s; }
+.bar:hover { opacity: 0.8; }
+.bar-lbl { font-size: 0.62rem; color: var(--slate); font-style: italic; }
+
+/* ── Audit log ── */
+.audit-item {
+  display: flex; gap: 12px; padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.82rem;
+}
+.audit-item:last-child { border-bottom: none; }
+.audit-time { color: var(--slate2); font-style: italic; min-width: 42px; }
+.audit-text strong { color: var(--navy); }
+.audit-text em { color: var(--gold); }
+
+/* ── User management ── */
+.user-row td:first-child { font-weight: bold; }
+.toggle-btn {
+  padding: 5px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: bold;
+  cursor: pointer; border: 1px solid; font-family: 'Times New Roman', serif; transition: all .15s;
+}
+.toggle-on { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+.toggle-off { background: var(--ivory2); color: var(--slate); border-color: var(--border2); }
+
+/* ── Progress bar ── */
+.prog-wrap { margin-bottom: 16px; }
+.prog-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--slate); margin-bottom: 5px; font-style: italic; }
+.prog-bar { height: 6px; background: var(--ivory2); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--navy), var(--gold)); transition: width .4s; }
+
+/* ── Grid helpers ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.sidebar-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+.form-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mt-8 { margin-top: 8px; }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .kpi-grid-4 { grid-template-columns: 1fr 1fr; }
+  .sidebar-layout { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .admin-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+  .login-view { grid-template-columns: 1fr; }
+  .login-left { display: none; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .features-grid, .roles-grid, .steps-row { grid-template-columns: 1fr; }
+  .stats-inner { grid-template-columns: 1fr 1fr; }
+  .dash-sidebar { width: 220px; }
+  .land-nav { padding: 0 24px; }
+  .land-nav-links { display: none; }
+}
+
+/* ════ Chat ════ */
+.chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 196px); min-height: 400px; }
+.chat-msgs { flex: 1; overflow-y: auto; padding: 0 0 20px; display: flex; flex-direction: column; gap: 18px; }
+.chat-bubble { display: flex; gap: 10px; max-width: 78%; }
+.chat-bubble.user { flex-direction: row-reverse; margin-left: auto; }
+.bubble-av {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;
+}
+.bubble-av.ai { background: var(--navy); color: var(--gold2); }
+.bubble-av.me { background: var(--ivory2); border: 1px solid var(--border); color: var(--navy); }
+.bubble-txt {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 12px 16px; font-size: 0.875rem; line-height: 1.65;
+  box-shadow: var(--shadow-sm);
+}
+.chat-bubble.user .bubble-txt { background: var(--navy); color: rgba(255,255,255,0.9); border-color: var(--navy); }
+.src-card {
+  background: var(--ivory); border: 1px solid var(--border); border-radius: 4px;
+  padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  margin-top: 8px; cursor: pointer; transition: border-color .15s;
+}
+.src-card:hover { border-color: var(--gold); }
+.chat-input-row {
+  display: flex; gap: 10px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+.chat-txt {
+  flex: 1; background: var(--white); border: 1px solid var(--border2);
+  border-radius: 4px; color: var(--navy);
+  font-family: 'Times New Roman', serif; font-size: 0.925rem;
+  padding: 12px 16px; outline: none;
+}
+.chat-txt:focus { border-color: var(--navy); }
+.chat-send {
+  background: var(--navy); color: var(--white); border: none;
+  border-radius: 4px; padding: 0 20px; cursor: pointer; font-size: 1.1rem;
+}
+.chat-send:hover { background: var(--navy2); }
+
+/* suggested pills */
+.suggestions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.sug-pill {
+  background: var(--ivory2); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 0.78rem; color: var(--navy); cursor: pointer; font-style: italic;
+  transition: all .15s;
+}
+.sug-pill:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+/* ══════════════════════════════════════════
+   ENHANCED HOVER EFFECTS — VidyaVault
+══════════════════════════════════════════ */
+
+/* ── Landing navbar link underline sweep ── */
+.land-nav-links a {
+  position: relative; padding-bottom: 3px;
+}
+.land-nav-links a::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0; right: 0;
+  height: 1.5px; background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .22s ease;
+}
+.land-nav-links a:hover::after { transform: scaleX(1); }
+.land-nav-links a:hover { color: var(--navy); }
+
+/* ── Navbar logo hover ── */
+.land-nav-logo { cursor: pointer; transition: opacity .18s; }
+.land-nav-logo:hover { opacity: 0.82; }
+
+/* ── Nav emblem spin on hover ── */
+.nav-emblem {
+  transition: transform .3s ease, background .2s;
+}
+.land-nav-logo:hover .nav-emblem {
+  transform: rotate(8deg) scale(1.05);
+  background: var(--gold);
+  color: var(--white);
+}
+
+/* ── Sign In button shimmer ── */
+.nav-login-btn {
+  position: relative; overflow: hidden;
+}
+.nav-login-btn::before {
+  content: '';
+  position: absolute; top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+  transform: skewX(-20deg);
+  transition: left .45s ease;
+}
+.nav-login-btn:hover::before { left: 130%; }
+
+/* ── Hero visual card rows ── */
+.hero-result-item {
+  transition: background .2s, border-color .2s, transform .2s;
+  cursor: pointer;
+}
+.hero-result-item:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(184,145,58,0.5);
+  transform: translateX(4px);
+}
+
+/* ── Stats strip numbers ── */
+.stats-inner > div {
+  cursor: default;
+  transition: transform .2s;
+}
+.stats-inner > div:hover { transform: translateY(-3px); }
+.stats-inner > div:hover .stat-num { color: var(--gold); }
+.stat-num { transition: color .2s; }
+
+/* ── Feature cards ── */
+.feature-card {
+  position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(184,145,58,0.04) 0%, transparent 60%);
+  opacity: 0; transition: opacity .3s;
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-card:hover .feature-icon {
+  background: var(--gold-light);
+  border-color: var(--gold2);
+  transform: scale(1.08) rotate(-4deg);
+}
+.feature-icon { transition: background .2s, border-color .2s, transform .25s; }
+
+/* ── Step items ── */
+.step-item { transition: transform .2s; cursor: default; }
+.step-item:hover { transform: translateY(-4px); }
+.step-item:hover .step-num {
+  transform: scale(1.1);
+  box-shadow: 0 8px 28px rgba(184,145,58,0.55);
+}
+.step-num { transition: transform .2s, box-shadow .2s; }
+
+/* ── Role cards ── */
+.role-card {
+  position: relative; overflow: hidden;
+}
+.role-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--navy));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s ease;
+}
+.role-card:hover::after { transform: scaleX(1); }
+.role-card:hover .role-name { color: var(--gold); }
+.role-name { transition: color .2s; }
+.role-card:hover .role-card-header { background: rgba(184,145,58,0.03); }
+.role-card-header { transition: background .2s; }
+
+/* ── KPI cards ── */
+.kpi-card {
+  position: relative; overflow: hidden;
+  transition: box-shadow .22s, transform .22s, border-left-color .2s;
+}
+.kpi-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+.kpi-card::after {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--gold);
+  opacity: 0; transform: translate(30px, -30px) scale(0.5);
+  transition: opacity .25s, transform .25s;
+}
+.kpi-card:hover::after { opacity: 0.06; transform: translate(20px,-20px) scale(1); }
+.kpi-value { transition: color .2s; }
+.kpi-card:hover .kpi-value { color: var(--gold); }
+
+/* ── Dashboard nav items ── */
+.dash-nav-item {
+  position: relative;
+}
+.dash-nav-item::before {
+  content: '';
+  position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 2px; background: var(--gold);
+  transform: scaleY(0); transform-origin: center;
+  transition: transform .18s ease;
+  border-radius: 1px;
+}
+.dash-nav-item:hover::before { transform: scaleY(1); }
+.dash-nav-item.active::before { transform: scaleY(1); }
+.dash-nav-item:hover { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); transform: translateX(2px); }
+.dash-nav-item { transition: all .18s; }
+
+/* ── Dashboard user card ── */
+.dash-user-card { transition: background .2s, border-color .2s; cursor: default; }
+.dash-user-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(184,145,58,0.4); }
+
+/* ── Topbar notification bell ── */
+.topbar-notif { transition: all .18s; }
+.topbar-notif:hover {
+  background: var(--ivory2);
+  border-color: var(--navy);
+  transform: scale(1.08);
+}
+
+/* ── Generic .card hover ── */
+.card {
+  transition: box-shadow .22s, transform .2s;
+}
+.card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+/* Don't lift table cards too much */
+.card table { pointer-events: auto; }
+
+/* ── Doc result rows in student search ── */
+.doc-result-row {
+  transition: box-shadow .2s, transform .2s, border-color .2s;
+}
+.card:has(.conf-wrap):hover {
+  border-color: var(--gold2);
+  box-shadow: 0 6px 24px rgba(184,145,58,0.14);
+}
+
+/* ── Table row hover ── */
+tr { transition: background .15s; }
+tr:hover td { background: var(--gold-light) !important; cursor: default; }
+
+/* ── Btn-sm hover ripple ── */
+.btn-sm {
+  position: relative; overflow: hidden;
+}
+.btn-sm::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(255,255,255,0.15);
+  transform: scale(0); border-radius: 3px;
+  transition: transform .2s;
+}
+.btn-sm:hover::after { transform: scale(1); }
+
+/* ── Version timeline card ── */
+.vtl-card {
+  transition: box-shadow .2s, border-color .2s, transform .18s;
+}
+.vtl-card:hover {
+  box-shadow: var(--shadow);
+  border-color: var(--gold2);
+  transform: translateX(4px);
+}
+.vtl-dot { transition: transform .2s, box-shadow .2s; }
+.vtl-item:hover .vtl-dot.current {
+  transform: scale(1.3);
+  box-shadow: 0 0 16px rgba(184,145,58,0.6);
+}
+
+/* ── Dropzone hover ── */
+.dropzone { transition: all .22s; }
+.dropzone:hover {
+  border-color: var(--gold);
+  background: var(--gold-light);
+  box-shadow: inset 0 0 0 1px rgba(184,145,58,0.25);
+  transform: scale(1.005);
+}
+.dropzone:hover .dropzone-icon { animation: bounce .4s ease; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* ── Login role tabs ── */
+.role-tab { transition: all .18s; }
+.role-tab:not(.active):hover {
+  background: rgba(26,39,68,0.06);
+  color: var(--navy);
+  transform: translateY(-1px);
+}
+.role-tab.active { transform: none; }
+
+/* ── Login feature icons ── */
+.login-feature-icon { transition: background .2s, border-color .2s, transform .2s; }
+.login-feature:hover .login-feature-icon {
+  background: rgba(184,145,58,0.25);
+  border-color: rgba(184,145,58,0.6);
+  transform: scale(1.1) rotate(-5deg);
+}
+
+/* ── Footer links ── */
+.footer-col a {
+  transition: color .18s, padding-left .18s;
+}
+.footer-col a:hover { padding-left: 6px; color: var(--gold2); }
+
+/* ── AI box hover ── */
+.ai-box {
+  transition: box-shadow .2s, border-color .2s;
+}
+.ai-box:hover {
+  border-color: rgba(184,145,58,0.5);
+  box-shadow: 0 4px 20px rgba(184,145,58,0.1);
+}
+
+/* ── Logout button ── */
+.btn-logout { transition: all .18s; }
+.btn-logout:hover {
+  background: rgba(192,57,43,0.25);
+  transform: translateX(-2px);
+  letter-spacing: 0.3px;
+}
+
+/* ── VidyaVault brand logo hover in dashboards ── */
+.dash-logo { cursor: pointer; transition: opacity .18s; }
+.dash-logo:hover { opacity: 0.85; }
+.dash-logo-box { transition: transform .25s, background .2s; }
+.dash-logo:hover .dash-logo-box { transform: rotate(-6deg) scale(1.1); }
+
+/* ── Navbar hover-scroll feedback ── */
+.nav-hover-active {
+  color: var(--navy) !important;
+}
+.nav-hover-active::after {
+  transform: scaleX(1) !important;
+  background: var(--gold) !important;
+}
+
+/* Section flash highlight on scroll-trigger */
+@keyframes sectionFlash {
+  0%   { box-shadow: inset 0 0 0 2px rgba(184,145,58,0); }
+  30%  { box-shadow: inset 0 0 0 3px rgba(184,145,58,0.45); }
+  100% { box-shadow: inset 0 0 0 2px rgba(184,145,58,0); }
+}
+.section-flash {
+  animation: sectionFlash 0.75s ease;
+}
+
+/* Nav link hover dwell indicator — thin gold underbar grows */
+.land-nav-links a {
+  position: relative; padding-bottom: 3px;
+}
+.land-nav-links a .nav-dwell-bar {
+  position: absolute; bottom: -4px; left: 0;
+  height: 2px; background: var(--gold);
+  width: 0%; transition: width 0.35s linear;
+  border-radius: 1px;
+}
+.land-nav-links a.nav-hover-active .nav-dwell-bar {
+  width: 100%;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LANDING PAGE
+═══════════════════════════════════════ -->
+<div class="view active" id="view-landing">
+
+  <nav class="land-nav">
+    <div class="land-nav-logo">
+      <div class="nav-emblem">VV</div>
+      <div>
+        <div class="nav-brand">Vidya<span>Vault</span></div>
+        <div class="nav-tagline">Indore Institute of Science &amp; Technology</div>
+      </div>
+    </div>
+    <div class="land-nav-links">
+      <a id="nav-features" href="#features">Features<span class="nav-dwell-bar"></span></a>
+      <a id="nav-how" href="#how">How It Works<span class="nav-dwell-bar"></span></a>
+      <a id="nav-roles" href="#roles">Who Uses It<span class="nav-dwell-bar"></span></a>
+      <a id="nav-contact" href="#contact">Contact<span class="nav-dwell-bar"></span></a>
+      <a class="nav-login-btn" onclick="showLogin()" style="cursor:pointer;">Sign In →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow">✦ AI-Powered Document Library</div>
+        <h1 class="hero-title">Find Any College Document in <em>Under 3 Seconds</em></h1>
+        <p class="hero-subtitle">
+          VidyaVault replaces the 15-minute trip to the department office with an intelligent AI search — ask in plain English, get instant results, available 24 × 7.
+        </p>
+        <div class="hero-ctas">
+          <a class="btn-hero-primary" onclick="showLogin()">Access VidyaVault →</a>
+          <a class="btn-hero-secondary" href="#how">See How It Works</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card-title">Live Search Preview</div>
+        <div class="hero-search-mock">
+          <span>📄</span>
+          <span>"Show me 2024 CS question paper…"</span>
+        </div>
+        <div class="hero-result-item">
+          <div class="result-icon-mock" style="background:rgba(61,217,164,0.15);">📄</div>
+          <div>
+            <div class="result-title-mock">CS End-Sem Question Paper — May 2024</div>
+            <div class="result-meta-mock">Computer Science · Version 1 · May 2024</div>
+          </div>
+          <div class="result-badge-mock" style="background:rgba(61,217,164,0.2);color:#5dca8a;">94% match</div>
+        </div>
+        <div class="hero-result-item">
+          <div class="result-icon-mock" style="background:rgba(212,168,75,0.15);">📘</div>
+          <div>
+            <div class="result-title-mock">B.Tech CS Syllabus 2024–25</div>
+            <div class="result-meta-mock">Computer Science · Version 3 · Jan 2025</div>
+          </div>
+          <div class="result-badge-mock" style="background:rgba(212,168,75,0.15);color:#d4a84b;">81% match</div>
+        </div>
+        <div style="margin-top:14px;padding:12px 14px;background:rgba(184,145,58,0.1);border:1px solid rgba(184,145,58,0.2);border-radius:4px;font-size:0.78rem;color:rgba(255,255,255,0.65);font-style:italic;">
+          ✦ AI Answer: The 2024 CS paper covers Data Structures, DBMS, OS — 100 marks, 3 hours. <span style="color:var(--gold2);">See full document →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-strip">
+    <div class="stats-inner">
+      <div>
+        <div class="stat-num">1,284<span>+</span></div>
+        <div class="stat-label">Documents Indexed</div>
+      </div>
+      <div>
+        <div class="stat-num"><span>&lt;</span>3s</div>
+        <div class="stat-label">Average Search Time</div>
+      </div>
+      <div>
+        <div class="stat-num">99.8<span>%</span></div>
+        <div class="stat-label">System Uptime</div>
+      </div>
+      <div>
+        <div class="stat-num">5<span>+</span></div>
+        <div class="stat-label">Departments Covered</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features">
+    <div class="section-label">Why VidyaVault</div>
+    <h2 class="section-title">Everything a Modern College Library Needs</h2>
+    <p class="section-sub">Designed specifically for IIST — no more lost files, no more waiting in line.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <div class="feature-title">AI-Powered Search</div>
+        <div class="feature-desc">Type a question in plain English. The system understands meaning — not just keywords — and returns the most relevant documents instantly.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Automatic Versioning</div>
+        <div class="feature-desc">Every uploaded document creates a new version automatically. Old versions are never lost and can be restored with a single click.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧾</div>
+        <div class="feature-title">OCR for Scanned PDFs</div>
+        <div class="feature-desc">Tesseract OCR automatically extracts text from scanned documents, making even old photocopied papers fully searchable.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <div class="feature-title">Role-Based Access</div>
+        <div class="feature-desc">Students, faculty, and admins each see a tailored interface with only the tools and permissions appropriate for their role.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Analytics Dashboard</div>
+        <div class="feature-desc">Admins get a real-time view of search activity, document usage, user registrations, and a full tamper-proof audit log.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">QR Code Sharing</div>
+        <div class="feature-desc">Generate a scannable QR code for any document — perfect for notice boards, kiosks, and quick sharing without logging in.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="how-section" id="how">
+    <div class="how-inner">
+      <div class="section-label">The Workflow</div>
+      <h2 class="section-title">How a Student Finds a Document</h2>
+      <p class="section-sub">Six steps, under three seconds, no staff assistance required.</p>
+      <div class="steps-row">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-title">Type Your Question</div>
+          <div class="step-desc">Ask in plain English — "Show me the 2024 CS question paper"</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-title">AI Vectorises Query</div>
+          <div class="step-desc">SentenceTransformers converts your words into semantic vectors</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-title">FAISS Searches Library</div>
+          <div class="step-desc">The vector database finds the most similar document chunks in milliseconds</div>
+        </div>
+      </div>
+      <div class="steps-row" style="margin-top:40px;">
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-title">Chunks Retrieved</div>
+          <div class="step-desc">The most relevant passages are pulled from matching documents</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-title">Llama 3 Writes Answer</div>
+          <div class="step-desc">A local AI model (Ollama) reads the chunks and generates a cited answer</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">6</div>
+          <div class="step-title">Preview &amp; Download</div>
+          <div class="step-desc">You see the answer with links to preview, download, or print the full document</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section class="roles-section" id="roles">
+    <div class="section-label">Access Levels</div>
+    <h2 class="section-title">Tailored for Every User</h2>
+    <p class="section-sub">Different dashboards, different tools — the right experience for each role.</p>
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-badge badge-student">Student</div>
+          <div class="role-name">Self-Service Kiosk</div>
+          <div class="role-desc">Find any document in under 3 seconds without visiting the office.</div>
+        </div>
+        <div class="role-card-body">
+          <ul class="role-features">
+            <li>AI-powered natural language search</li>
+            <li>Filter by department, category &amp; year</li>
+            <li>Preview and download documents</li>
+            <li>Chat-style AI conversation interface</li>
+            <li>QR code generation for quick sharing</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <button class="btn-role primary" onclick="showDash('student')">Enter as Student →</button>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-badge badge-faculty">Faculty</div>
+          <div class="role-name">Upload &amp; Manage</div>
+          <div class="role-desc">Upload documents with auto-OCR, versioning and instant indexing.</div>
+        </div>
+        <div class="role-card-body">
+          <ul class="role-features">
+            <li>Drag &amp; drop bulk PDF upload</li>
+            <li>Auto-OCR for scanned documents</li>
+            <li>Automatic version control</li>
+            <li>One-click rollback to any version</li>
+            <li>Metadata tagging &amp; categorisation</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <button class="btn-role" onclick="showDash('faculty')">Enter as Faculty →</button>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-card-header">
+          <div class="role-badge badge-admin">Admin</div>
+          <div class="role-name">System Command</div>
+          <div class="role-desc">Full visibility and control over users, documents and analytics.</div>
+        </div>
+        <div class="role-card-body">
+          <ul class="role-features">
+            <li>Real-time KPI dashboard</li>
+            <li>Search funnel analytics chart</li>
+            <li>User management &amp; role control</li>
+            <li>Tamper-proof audit log</li>
+            <li>One-click PDF &amp; Excel export</li>
+          </ul>
+        </div>
+        <div class="role-card-footer">
+          <button class="btn-role" onclick="showDash('admin')">Enter as Admin →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="land-footer" id="contact">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-logo">
+            <div class="nav-emblem">VV</div>
+            <div class="footer-logo-text">Vidya<span style="color:var(--gold2);">Vault</span></div>
+          </div>
+          <div class="footer-about">An AI-powered document management system developed for Indore Institute of Science &amp; Technology. Built by Nishita, Udit, Rishi &amp; Rudra.</div>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Quick Links</div>
+          <a href="#features">Features</a>
+          <a href="#how">How It Works</a>
+          <a href="#roles">Access Levels</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Portals</div>
+          <a onclick="showDash('student')" style="cursor:pointer;">Student Portal</a>
+          <a onclick="showDash('faculty')" style="cursor:pointer;">Faculty Portal</a>
+          <a onclick="showDash('admin')" style="cursor:pointer;">Admin Portal</a>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Contact</div>
+          <a href="#"><span class="__cf_email__" data-cfemail="285b45495a5c4c474b5b6841415b5c06494b064146">[email&#160;protected]</span></a>
+          <a href="#">IT Department, IIST</a>
+          <a href="#">Indore, Madhya Pradesh</a>
+        </div>
+      </div>
+      <hr class="footer-divider"/>
+      <div class="footer-bottom">
+        <div>© 2025 Indore Institute of Science &amp; Technology. All rights reserved.</div>
+        <div>VidyaVault v1.0 · Powered by Llama 3 + FAISS + LangChain</div>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /landing -->
+
+
+<!-- ═══════════════════════════════════════
+     LOGIN PAGE
+═══════════════════════════════════════ -->
+<div class="view" id="view-login">
+  <div class="login-view">
+    <div class="login-left">
+      <div class="login-left-inner">
+        <div class="login-logo">
+          <div class="login-logo-emblem">VV</div>
+          <div class="login-logo-text">Vidya<span>Vault</span></div>
+        </div>
+        <h2>Welcome to <em>IIST's</em> Digital Document Library</h2>
+        <p>Sign in to access syllabi, question papers, circulars, and certificates — all powered by AI search and available 24 × 7.</p>
+        <div class="login-feature-list">
+          <div class="login-feature">
+            <div class="login-feature-icon">🔍</div>
+            <div class="login-feature-text">AI search answers in plain English</div>
+          </div>
+          <div class="login-feature">
+            <div class="login-feature-icon">⚡</div>
+            <div class="login-feature-text">Results in under 3 seconds</div>
+          </div>
+          <div class="login-feature">
+            <div class="login-feature-icon">🔐</div>
+            <div class="login-feature-text">Secure role-based access control</div>
+          </div>
+          <div class="login-feature">
+            <div class="login-feature-icon">📦</div>
+            <div class="login-feature-text">Every document version preserved forever</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="login-right">
+      <div class="login-card">
+        <div class="login-card-header">
+          <h3>Sign In</h3>
+          <p>Select your role to access the right portal</p>
+        </div>
+
+        <div class="role-tabs">
+          <div class="role-tab active" id="tab-student" onclick="setRole('student')">
+            <span>🎓</span> Student
+          </div>
+          <div class="role-tab" id="tab-faculty" onclick="setRole('faculty')">
+            <span>👨‍🏫</span> Faculty
+          </div>
+          <div class="role-tab" id="tab-admin" onclick="setRole('admin')">
+            <span>⚙️</span> Admin
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Email / Enrollment ID</label>
+          <input type="text" id="login-email" placeholder="e.g. 2024CS0042 or name@iist.ac.in" value="nishita@iist.ac.in"/>
+        </div>
+        <div class="form-field">
+          <label>Password</label>
+          <input type="password" id="login-pass" value="••••••••" placeholder="Enter your password"/>
+        </div>
+        <div class="form-row">
+          <label class="form-check"><input type="checkbox" checked/> Remember me</label>
+          <span class="form-link">Forgot password?</span>
+        </div>
+        <button class="btn-login" onclick="doLogin()">Sign In to VidyaVault</button>
+        <div class="login-divider"><span>or sign in directly as</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+          <button class="btn-sm" onclick="showDash('student')" style="justify-content:center;padding:10px 8px;">🎓 Student</button>
+          <button class="btn-sm" onclick="showDash('faculty')" style="justify-content:center;padding:10px 8px;">👨‍🏫 Faculty</button>
+          <button class="btn-sm" onclick="showDash('admin')" style="justify-content:center;padding:10px 8px;">⚙️ Admin</button>
+        </div>
+        <div class="login-back" onclick="showLanding()">← Back to Home</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /login -->
+
+
+<!-- ═══════════════════════════════════════
+     STUDENT DASHBOARD
+═══════════════════════════════════════ -->
+<div class="view" id="view-student">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="dash-sidebar-top">
+        <div class="dash-logo">
+          <div class="dash-logo-box">VV</div>
+          <div class="dash-logo-name">Vidya<span>Vault</span></div>
+        </div>
+        <div class="dash-user-card">
+          <div class="dash-user-name">Priya Sharma</div>
+          <div class="dash-user-role role-color-student">● Student — B.Tech CS, Sem 6</div>
+        </div>
+      </div>
+      <nav class="dash-nav">
+        <div class="dash-nav-section">
+          <div class="dash-nav-label">Document Access</div>
+          <div class="dash-nav-item active" onclick="switchStudentPage('search',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search Documents
+            <span class="dash-nav-badge">AI</span>
+          </div>
+          <div class="dash-nav-item" onclick="switchStudentPage('chat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            AI Chat
+          </div>
+          <div class="dash-nav-item" onclick="switchStudentPage('downloads',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            My Downloads
+          </div>
+        </div>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <button class="btn-logout" onclick="showLanding()">← Sign Out</button>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="dash-topbar-title" id="student-topbar-title">Search Documents</div>
+        <div class="dash-topbar-right">
+          <span class="topbar-date">Saturday, 28 March 2026</span>
+          <div class="topbar-notif" title="Notifications"><div class="notif-dot"></div>🔔</div>
+        </div>
+      </div>
+      <div class="dash-content">
+
+        <!-- SEARCH PAGE -->
+        <div class="dash-page active" id="s-search">
+          <div class="content-header">
+            <div class="content-title">Find Your Documents</div>
+            <div class="content-sub">Ask in plain English — the AI will find and summarise it for you</div>
+          </div>
+          <div class="card mb-24">
+            <div class="card-body">
+              <div class="search-field">
+                <input type="text" id="s-search-input" placeholder="e.g. Show me the 2024 Computer Science question paper…" value="Show me the 2024 CS question paper"/>
+              </div>
+              <div class="filter-row">
+                <select class="filter-select"><option>All Categories</option><option>Circular</option><option>Syllabus</option><option>Question Paper</option><option>Certificate</option></select>
+                <select class="filter-select"><option>All Departments</option><option>Computer Science</option><option>Mechanical</option><option>Electronics</option></select>
+                <select class="filter-select"><option>All Years</option><option>2024</option><option>2023</option><option>2022</option></select>
+                <button class="btn-sm gold" style="margin-left:auto;" onclick="">🔍 Search</button>
+              </div>
+              <div style="font-size:0.78rem;color:var(--slate);font-style:italic;margin-top:4px;">Recent: </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+                <span class="sug-pill">MBA syllabus 2023</span>
+                <span class="sug-pill">Exam schedule circular</span>
+                <span class="sug-pill">Fee certificate format</span>
+                <span class="sug-pill">Hostel rules 2024</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-box mb-24">
+            <div class="ai-box-header"><div class="ai-pulse"></div>AI Answer</div>
+            <div class="ai-box-text">Based on documents in the IIST library, I found the <span class="ai-cite">2024 B.Tech CS End-Semester Question Paper (May 2024)</span>. It covers Data Structures, Algorithms, DBMS, and Operating Systems — 4 sections, 100 marks, 3-hour duration. You can preview or download it below.</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="card">
+              <div class="card-body" style="padding:18px 24px;">
+                <div style="display:flex;align-items:flex-start;gap:16px;">
+                  <div style="width:42px;height:42px;background:var(--green-bg);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">📄</div>
+                  <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+                      <span style="font-weight:bold;font-size:0.95rem;">CS End-Sem Question Paper — May 2024</span>
+                      <span class="badge badge-qpaper">Q. Paper</span>
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--slate);font-style:italic;display:flex;gap:16px;margin-bottom:8px;">
+                      <span>🏛 Computer Science</span><span>📅 May 2024</span><span>📦 Version 1</span>
+                    </div>
+                    <div class="conf-wrap"><div class="conf-bar"><div class="conf-fill" style="width:94%"></div></div><span class="conf-pct">94%</span></div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn-sm">👁 Preview</button>
+                    <button class="btn-sm gold">⬇ Download</button>
+                    <button class="btn-sm">📱 QR</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body" style="padding:18px 24px;">
+                <div style="display:flex;align-items:flex-start;gap:16px;">
+                  <div style="width:42px;height:42px;background:var(--amber-bg);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">📘</div>
+                  <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+                      <span style="font-weight:bold;font-size:0.95rem;">B.Tech CS Syllabus 2024–25</span>
+                      <span class="badge badge-syllabus">Syllabus</span>
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--slate);font-style:italic;display:flex;gap:16px;margin-bottom:8px;">
+                      <span>🏛 Computer Science</span><span>📅 Jan 2025</span><span>📦 Version 3</span>
+                    </div>
+                    <div class="conf-wrap"><div class="conf-bar"><div class="conf-fill" style="width:81%"></div></div><span class="conf-pct">81%</span></div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn-sm">👁 Preview</button>
+                    <button class="btn-sm gold">⬇ Download</button>
+                    <button class="btn-sm">📱 QR</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body" style="padding:18px 24px;">
+                <div style="display:flex;align-items:flex-start;gap:16px;">
+                  <div style="width:42px;height:42px;background:rgba(26,39,68,0.07);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">📋</div>
+                  <div style="flex:1;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+                      <span style="font-weight:bold;font-size:0.95rem;">Exam Schedule — November 2024</span>
+                      <span class="badge badge-circular">Circular</span>
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--slate);font-style:italic;display:flex;gap:16px;margin-bottom:8px;">
+                      <span>🏛 All Departments</span><span>📅 Oct 2024</span><span>📦 Version 1</span>
+                    </div>
+                    <div class="conf-wrap"><div class="conf-bar"><div class="conf-fill" style="width:67%"></div></div><span class="conf-pct">67%</span></div>
+                  </div>
+                  <div class="action-btns">
+                    <button class="btn-sm">👁 Preview</button>
+                    <button class="btn-sm gold">⬇ Download</button>
+                    <button class="btn-sm">📱 QR</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAT PAGE -->
+        <div class="dash-page" id="s-chat">
+          <div class="content-header">
+            <div class="content-title">AI Chat</div>
+            <div class="content-sub">Ask follow-up questions — get cited, conversational answers</div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="chat-wrap">
+                <div class="chat-msgs" id="student-chat-msgs">
+                  <div class="chat-bubble">
+                    <div class="bubble-av ai">AI</div>
+                    <div>
+                      <div class="bubble-txt">Hello Priya! I'm VidyaVault AI. I have access to all IIST circulars, syllabi, question papers and certificates. What can I help you find today?</div>
+                      <div class="suggestions">
+                        <div class="sug-pill" onclick="studentSuggestion(this)">2024 CS question paper</div>
+                        <div class="sug-pill" onclick="studentSuggestion(this)">Latest exam schedule</div>
+                        <div class="sug-pill" onclick="studentSuggestion(this)">Fee bonafide certificate</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="chat-input-row">
+                  <input class="chat-txt" id="s-chat-input" placeholder="Ask anything about IIST documents…" onkeydown="if(event.key==='Enter')sendStudentChat()"/>
+                  <button class="chat-send" onclick="sendStudentChat()">→</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOWNLOADS PAGE -->
+        <div class="dash-page" id="s-downloads">
+          <div class="content-header">
+            <div class="content-title">My Downloads</div>
+            <div class="content-sub">Documents you have previously accessed or downloaded</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead><tr><th>Document</th><th>Category</th><th>Downloaded</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>CS End-Sem Q.Paper May 2024</strong></td><td><span class="badge badge-qpaper">Q. Paper</span></td><td><em style="color:var(--slate);font-size:0.8rem;">Today, 10:42 AM</em></td><td><div class="action-btns"><button class="btn-sm">👁 View</button><button class="btn-sm gold">⬇ Again</button></div></td></tr>
+                <tr><td><strong>B.Tech CS Syllabus 2024–25</strong></td><td><span class="badge badge-syllabus">Syllabus</span></td><td><em style="color:var(--slate);font-size:0.8rem;">Yesterday, 3:15 PM</em></td><td><div class="action-btns"><button class="btn-sm">👁 View</button><button class="btn-sm gold">⬇ Again</button></div></td></tr>
+                <tr><td><strong>Hostel Rules &amp; Regulations</strong></td><td><span class="badge badge-circular">Circular</span></td><td><em style="color:var(--slate);font-size:0.8rem;">22 Mar 2026</em></td><td><div class="action-btns"><button class="btn-sm">👁 View</button><button class="btn-sm gold">⬇ Again</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div><!-- /student -->
+
+
+<!-- ═══════════════════════════════════════
+     FACULTY DASHBOARD
+═══════════════════════════════════════ -->
+<div class="view" id="view-faculty">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="dash-sidebar-top">
+        <div class="dash-logo">
+          <div class="dash-logo-box">VV</div>
+          <div class="dash-logo-name">Vidya<span>Vault</span></div>
+        </div>
+        <div class="dash-user-card">
+          <div class="dash-user-name">Prof. Nishita Sharma</div>
+          <div class="dash-user-role role-color-faculty">● Faculty — Computer Science</div>
+        </div>
+      </div>
+      <nav class="dash-nav">
+        <div class="dash-nav-section">
+          <div class="dash-nav-label">Document Management</div>
+          <div class="dash-nav-item active" onclick="switchFacultyPage('upload',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Document
+          </div>
+          <div class="dash-nav-item" onclick="switchFacultyPage('mydocs',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            My Documents
+          </div>
+          <div class="dash-nav-item" onclick="switchFacultyPage('versions',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Version History
+          </div>
+        </div>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <button class="btn-logout" onclick="showLanding()">← Sign Out</button>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="dash-topbar-title" id="faculty-topbar-title">Upload Document</div>
+        <div class="dash-topbar-right">
+          <span class="topbar-date">Saturday, 28 March 2026</span>
+        </div>
+      </div>
+      <div class="dash-content">
+
+        <!-- UPLOAD PAGE -->
+        <div class="dash-page active" id="f-upload">
+          <div class="content-header">
+            <div class="content-title">Upload Documents</div>
+            <div class="content-sub">Drag &amp; drop PDFs — auto-OCR, auto-versioning, instant AI indexing</div>
+          </div>
+          <div class="sidebar-layout">
+            <div>
+              <div class="dropzone" id="faculty-drop" ondragover="dOver(event,'faculty-drop')" ondragleave="dLeave('faculty-drop')" ondrop="dDrop(event,'faculty-drop')" onclick="document.getElementById('ffile').click()">
+                <input type="file" id="ffile" hidden accept=".pdf,.docx" onchange="startUpload()"/>
+                <div class="dropzone-icon">📂</div>
+                <h3>Drop PDF here or click to browse</h3>
+                <p>Supports <strong>bulk upload</strong> · Max 50 MB · PDF, DOCX accepted</p>
+              </div>
+
+              <div style="background:var(--amber-bg);border:1px solid rgba(184,106,26,0.3);border-left:3px solid var(--amber);border-radius:4px;padding:14px 18px;display:flex;align-items:center;gap:10px;font-size:0.84rem;color:var(--amber);margin-bottom:20px;">
+                ⚠️ <span>A document named <strong>"CS Syllabus 2024"</strong> already exists. <strong>Version 3 will be created.</strong> Previous versions are preserved.</span>
+              </div>
+
+              <div class="card mb-24">
+                <div class="card-header"><div class="card-title">Document Metadata</div></div>
+                <div class="card-body">
+                  <div class="form-two-col" style="margin-bottom:16px;">
+                    <div class="form-field"><label>Department</label><select><option>Computer Science</option><option>Mechanical</option><option>Electronics</option></select></div>
+                    <div class="form-field"><label>Category</label><select><option>Syllabus</option><option>Question Paper</option><option>Circular</option><option>Certificate</option></select></div>
+                    <div class="form-field"><label>Subject / Title</label><input type="text" value="B.Tech CS Syllabus 2024–25"/></div>
+                    <div class="form-field"><label>Academic Year</label><input type="text" value="2024"/></div>
+                  </div>
+                  <div class="prog-wrap">
+                    <div class="prog-label"><span>OCR + Embedding Progress</span><span id="f-pct">72%</span></div>
+                    <div class="prog-bar"><div class="prog-fill" id="f-prog" style="width:72%"></div></div>
+                  </div>
+                  <button class="btn-login" onclick="startUpload()">⬆ Upload &amp; Index Document</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header"><div class="card-title">📋 Version History</div></div>
+              <div class="card-body" style="padding:16px 20px;">
+                <div class="version-timeline">
+                  <div class="vtl-item">
+                    <div class="vtl-dot current"></div>
+                    <div class="vtl-card">
+                      <div class="vtl-top">
+                        <span class="vtl-tag">Version 2 <span style="background:var(--green-bg);color:var(--green);font-size:0.65rem;padding:2px 7px;border-radius:2px;margin-left:6px;font-weight:bold;">CURRENT</span></span>
+                      </div>
+                      <div class="vtl-meta">Nishita Sharma · 12 Jan 2025</div>
+                      <div class="vtl-desc">Updated credit hours, added AI/ML electives.</div>
+                      <div class="vtl-actions"><button class="btn-sm">⬇ Download</button></div>
+                    </div>
+                  </div>
+                  <div class="vtl-item">
+                    <div class="vtl-dot"></div>
+                    <div class="vtl-card">
+                      <div class="vtl-top"><span class="vtl-tag">Version 1</span></div>
+                      <div class="vtl-meta">Udit Verma · 8 Jul 2024</div>
+                      <div class="vtl-desc">Original syllabus for AY 2024–25.</div>
+                      <div class="vtl-actions"><button class="btn-sm">⬇ Download</button><button class="btn-sm gold">↩ Restore</button></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MY DOCS PAGE -->
+        <div class="dash-page" id="f-mydocs">
+          <div class="content-header">
+            <div class="content-title">My Documents</div>
+            <div class="content-sub">All documents uploaded by you</div>
+          </div>
+          <div class="card">
+            <table>
+              <thead><tr><th>Title</th><th>Category</th><th>Version</th><th>Uploaded</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>B.Tech CS Syllabus 2024–25</strong></td><td><span class="badge badge-syllabus">Syllabus</span></td><td>V3</td><td><em style="font-size:0.8rem;color:var(--slate);">12 Jan 2025</em></td><td><span class="badge badge-active">Active</span></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button><button class="btn-sm gold">⬇</button></div></td></tr>
+                <tr><td><strong>CS Mid-Sem Q.Paper Nov 2024</strong></td><td><span class="badge badge-qpaper">Q. Paper</span></td><td>V1</td><td><em style="font-size:0.8rem;color:var(--slate);">4 Nov 2024</em></td><td><span class="badge badge-active">Active</span></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button><button class="btn-sm gold">⬇</button></div></td></tr>
+                <tr><td><strong>Exam Circular — Nov 2024</strong></td><td><span class="badge badge-circular">Circular</span></td><td>V1</td><td><em style="font-size:0.8rem;color:var(--slate);">28 Oct 2024</em></td><td><span class="badge badge-archived">Archived</span></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button><button class="btn-sm gold">⬇</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- VERSIONS PAGE -->
+        <div class="dash-page" id="f-versions">
+          <div class="content-header">
+            <div class="content-title">Version History</div>
+            <div class="content-sub">Full timeline for B.Tech CS Syllabus — restore any previous version</div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="version-timeline">
+                <div class="vtl-item">
+                  <div class="vtl-dot current"></div>
+                  <div class="vtl-card">
+                    <div class="vtl-top"><span class="vtl-tag">Version 3 — Current <span style="background:var(--green-bg);color:var(--green);font-size:0.65rem;padding:2px 8px;border-radius:2px;margin-left:8px;font-weight:bold;">ACTIVE</span></span></div>
+                    <div class="vtl-meta">Uploaded by <strong>Nishita Sharma</strong> · 12 January 2025</div>
+                    <div class="vtl-desc">Added 2 new AI/ML elective courses. Updated contact hours for Sem 6.</div>
+                    <div class="vtl-actions"><button class="btn-sm gold">⬇ Download</button></div>
+                  </div>
+                </div>
+                <div class="vtl-item">
+                  <div class="vtl-dot"></div>
+                  <div class="vtl-card">
+                    <div class="vtl-top"><span class="vtl-tag">Version 2</span></div>
+                    <div class="vtl-meta">Uploaded by <strong>Udit Verma</strong> · 8 August 2024</div>
+                    <div class="vtl-desc">Corrected credit hours for CS301. Minor formatting updates.</div>
+                    <div class="vtl-actions"><button class="btn-sm">⬇ Download</button><button class="btn-sm gold">↩ Restore V2</button></div>
+                  </div>
+                </div>
+                <div class="vtl-item">
+                  <div class="vtl-dot"></div>
+                  <div class="vtl-card">
+                    <div class="vtl-top"><span class="vtl-tag">Version 1 — Original</span></div>
+                    <div class="vtl-meta">Uploaded by <strong>Rishi Patel</strong> · 2 July 2024</div>
+                    <div class="vtl-desc">Initial syllabus for Academic Year 2024–25.</div>
+                    <div class="vtl-actions"><button class="btn-sm">⬇ Download</button><button class="btn-sm gold">↩ Restore V1</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div><!-- /faculty -->
+
+
+<!-- ═══════════════════════════════════════
+     ADMIN DASHBOARD
+═══════════════════════════════════════ -->
+<div class="view" id="view-admin">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="dash-sidebar-top">
+        <div class="dash-logo">
+          <div class="dash-logo-box">VV</div>
+          <div class="dash-logo-name">Vidya<span>Vault</span></div>
+        </div>
+        <div class="dash-user-card">
+          <div class="dash-user-name">System Administrator</div>
+          <div class="dash-user-role role-color-admin">● Admin — Full Access</div>
+        </div>
+      </div>
+      <nav class="dash-nav">
+        <div class="dash-nav-section">
+          <div class="dash-nav-label">Overview</div>
+          <div class="dash-nav-item active" onclick="switchAdminPage('overview',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Dashboard
+          </div>
+          <div class="dash-nav-label">Management</div>
+          <div class="dash-nav-item" onclick="switchAdminPage('docs',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            All Documents
+          </div>
+          <div class="dash-nav-item" onclick="switchAdminPage('users',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            User Management
+            <span class="dash-nav-badge">3</span>
+          </div>
+          <div class="dash-nav-item" onclick="switchAdminPage('audit',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Audit Log
+          </div>
+        </div>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <button class="btn-logout" onclick="showLanding()">← Sign Out</button>
+      </div>
+    </aside>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="dash-topbar-title" id="admin-topbar-title">System Dashboard</div>
+        <div class="dash-topbar-right">
+          <span class="topbar-date">Saturday, 28 March 2026</span>
+          <div class="topbar-notif"><div class="notif-dot"></div>🔔</div>
+          <button class="btn-sm gold">📊 Export Report</button>
+        </div>
+      </div>
+      <div class="dash-content">
+
+        <!-- OVERVIEW -->
+        <div class="dash-page active" id="a-overview">
+          <div class="content-header">
+            <div class="content-title">System Overview</div>
+            <div class="content-sub">Real-time metrics across the entire IIST document platform</div>
+          </div>
+          <div class="kpi-grid kpi-grid-4 mb-24">
+            <div class="kpi-card"><div class="kpi-label">Total Documents</div><div class="kpi-value">1,284</div><div class="kpi-change kpi-up">↑ 34 uploaded this week</div></div>
+            <div class="kpi-card" style="border-left-color:var(--green);"><div class="kpi-label">Searches Today</div><div class="kpi-value">847</div><div class="kpi-change kpi-up">↑ 12% vs yesterday</div></div>
+            <div class="kpi-card" style="border-left-color:var(--navy);"><div class="kpi-label">Active Users</div><div class="kpi-value">312</div><div class="kpi-change kpi-up">↑ 8 new registrations</div></div>
+            <div class="kpi-card" style="border-left-color:var(--amber);"><div class="kpi-label">System Uptime</div><div class="kpi-value">99.8%</div><div class="kpi-change kpi-neutral">No incidents this month</div></div>
+          </div>
+
+          <div class="two-col mb-24">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Weekly Search Funnel</div>
+                <div style="display:flex;gap:14px;font-size:0.72rem;color:var(--slate);font-style:italic;">
+                  <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--navy);border-radius:2px;display:inline-block;"></span>Queries</span>
+                  <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--gold);border-radius:2px;display:inline-block;"></span>Downloads</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="bar-chart">
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:100%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:62%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Mon</div></div>
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:75%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:45%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Tue</div></div>
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:88%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:72%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Wed</div></div>
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:65%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:50%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Thu</div></div>
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:93%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:80%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Fri</div></div>
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:55%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:40%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Sat</div></div>
+                  <div class="bar-col"><div class="bar-wrap"><div class="bar" style="height:38%;background:var(--navy);opacity:.75;"></div><div class="bar" style="height:28%;background:var(--gold);opacity:.85;"></div></div><div class="bar-lbl">Sun</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">Recent Audit Log</div></div>
+              <div class="card-body" style="padding:12px 20px;">
+                <div class="audit-item"><div class="audit-time">10:42</div><div class="audit-text"><strong>Nishita</strong> uploaded <em>CS Syllabus V3</em></div></div>
+                <div class="audit-item"><div class="audit-time">10:38</div><div class="audit-text"><strong>Student #44</strong> searched "MBA Q.Paper"</div></div>
+                <div class="audit-item"><div class="audit-time">10:21</div><div class="audit-text"><strong>Udit</strong> rolled back <em>Hostel Rules</em> to V1</div></div>
+                <div class="audit-item"><div class="audit-time">10:05</div><div class="audit-text"><strong>Admin</strong> added user <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0d7f647e65644d64647e79236c6e236463">[email&#160;protected]</a></em> as Faculty</div></div>
+                <div class="audit-item"><div class="audit-time">09:58</div><div class="audit-text"><strong>Student #31</strong> downloaded <em>Fee Certificate</em></div></div>
+                <div class="audit-item"><div class="audit-time">09:44</div><div class="audit-text"><strong>Priya</strong> logged in from <em>kiosk-02</em></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kpi-grid kpi-grid-3">
+            <div class="kpi-card"><div class="kpi-label">Circulars</div><div class="kpi-value" style="font-size:1.5rem;">347</div><div class="kpi-change kpi-neutral">28 departments</div></div>
+            <div class="kpi-card"><div class="kpi-label">Syllabi</div><div class="kpi-value" style="font-size:1.5rem;">218</div><div class="kpi-change kpi-up">↑ 12 this semester</div></div>
+            <div class="kpi-card"><div class="kpi-label">Question Papers</div><div class="kpi-value" style="font-size:1.5rem;">719</div><div class="kpi-change kpi-up">↑ 40 this month</div></div>
+          </div>
+        </div>
+
+        <!-- ALL DOCS -->
+        <div class="dash-page" id="a-docs">
+          <div class="content-header">
+            <div class="content-title">All Documents</div>
+            <div class="content-sub">Complete document repository — sortable and filterable</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <select class="filter-select"><option>All Categories</option><option>Circular</option><option>Syllabus</option><option>Q. Paper</option></select>
+                <select class="filter-select"><option>All Departments</option><option>CS</option><option>Mechanical</option></select>
+                <select class="filter-select"><option>All Status</option><option>Active</option><option>Archived</option></select>
+              </div>
+              <button class="btn-sm gold">📥 Export Excel</button>
+            </div>
+            <table>
+              <thead><tr><th>Title</th><th>Category</th><th>Department</th><th>Version</th><th>Uploaded</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr><td><strong>CS End-Sem Q.Paper May 2024</strong></td><td><span class="badge badge-qpaper">Q. Paper</span></td><td>CS</td><td>V1</td><td><em style="font-size:0.8rem;color:var(--slate);">15 May 2024</em></td><td><span class="badge badge-active">Active</span></td><td><div class="action-btns"><button class="btn-sm">✏</button><button class="btn-sm">🗑</button></div></td></tr>
+                <tr><td><strong>B.Tech CS Syllabus 2024–25</strong></td><td><span class="badge badge-syllabus">Syllabus</span></td><td>CS</td><td>V3</td><td><em style="font-size:0.8rem;color:var(--slate);">12 Jan 2025</em></td><td><span class="badge badge-active">Active</span></td><td><div class="action-btns"><button class="btn-sm">✏</button><button class="btn-sm">🗑</button></div></td></tr>
+                <tr><td><strong>Exam Schedule Nov 2024</strong></td><td><span class="badge badge-circular">Circular</span></td><td>All</td><td>V1</td><td><em style="font-size:0.8rem;color:var(--slate);">28 Oct 2024</em></td><td><span class="badge badge-archived">Archived</span></td><td><div class="action-btns"><button class="btn-sm">✏</button><button class="btn-sm">🗑</button></div></td></tr>
+                <tr><td><strong>Hostel Rules &amp; Regulations</strong></td><td><span class="badge badge-circular">Circular</span></td><td>Admin</td><td>V2</td><td><em style="font-size:0.8rem;color:var(--slate);">3 Aug 2024</em></td><td><span class="badge badge-active">Active</span></td><td><div class="action-btns"><button class="btn-sm">✏</button><button class="btn-sm">🗑</button></div></td></tr>
+                <tr><td><strong>Fee Bonafide Certificate Template</strong></td><td><span class="badge badge-cert">Certificate</span></td><td>Accounts</td><td>V1</td><td><em style="font-size:0.8rem;color:var(--slate);">10 Jun 2024</em></td><td><span class="badge badge-active">Active</span></td><td><div class="action-btns"><button class="btn-sm">✏</button><button class="btn-sm">🗑</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- USERS -->
+        <div class="dash-page" id="a-users">
+          <div class="content-header">
+            <div class="content-title">User Management</div>
+            <div class="content-sub">Manage roles, activate/deactivate accounts, and track logins</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">All Users</div>
+              <button class="btn-sm gold">+ Add User</button>
+            </div>
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Last Login</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody class="user-row">
+                <tr><td>Nishita Sharma</td><td style="font-style:italic;font-size:0.8rem;color:var(--slate);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ee0e7fde6e7faefcee7e7fdfaa0efeda0e7e0">[email&#160;protected]</a></td><td><span class="badge" style="background:var(--amber-bg);color:var(--amber);">Faculty</span></td><td><em style="font-size:0.8rem;color:var(--slate);">Today</em></td><td><button class="toggle-btn toggle-on">Active</button></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button></div></td></tr>
+                <tr><td>Udit Verma</td><td style="font-style:italic;font-size:0.8rem;color:var(--slate);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2653424f52664f4f5552084745084f48">[email&#160;protected]</a></td><td><span class="badge" style="background:var(--amber-bg);color:var(--amber);">Faculty</span></td><td><em style="font-size:0.8rem;color:var(--slate);">Yesterday</em></td><td><button class="toggle-btn toggle-on">Active</button></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button></div></td></tr>
+                <tr><td>Rishi Patel</td><td style="font-style:italic;font-size:0.8rem;color:var(--slate);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfadb6acb7b69fb6b6acabf1bebcf1b6b1">[email&#160;protected]</a></td><td><span class="badge" style="background:var(--amber-bg);color:var(--amber);">Faculty</span></td><td><em style="font-size:0.8rem;color:var(--slate);">25 Mar 2026</em></td><td><button class="toggle-btn toggle-on">Active</button></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button></div></td></tr>
+                <tr><td>Priya Sharma</td><td style="font-style:italic;font-size:0.8rem;color:var(--slate);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7143414345120241454331181802055f10125f181f">[email&#160;protected]</a></td><td><span class="badge badge-student">Student</span></td><td><em style="font-size:0.8rem;color:var(--slate);">Today</em></td><td><button class="toggle-btn toggle-on">Active</button></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button></div></td></tr>
+                <tr><td>Amit Kumar</td><td style="font-style:italic;font-size:0.8rem;color:var(--slate);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a99b999b9ac4cc999890e9c0c0dadd87c8ca87c0c7">[email&#160;protected]</a></td><td><span class="badge badge-student">Student</span></td><td><em style="font-size:0.8rem;color:var(--slate);">22 Mar 2026</em></td><td><button class="toggle-btn toggle-off">Inactive</button></td><td><div class="action-btns"><button class="btn-sm">✏ Edit</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- AUDIT -->
+        <div class="dash-page" id="a-audit">
+          <div class="content-header">
+            <div class="content-title">Audit Log</div>
+            <div class="content-sub">Tamper-proof log of all system activity — uploads, searches, logins, and role changes</div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div style="display:flex;gap:10px;">
+                <select class="filter-select"><option>All Actions</option><option>Upload</option><option>Search</option><option>Login</option><option>Download</option></select>
+                <select class="filter-select"><option>All Users</option><option>Faculty</option><option>Student</option><option>Admin</option></select>
+              </div>
+              <button class="btn-sm gold">📥 Export PDF</button>
+            </div>
+            <div class="card-body" style="padding:0 20px;">
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">10:42</div><div class="audit-text"><strong>Nishita Sharma</strong> uploaded <em>B.Tech CS Syllabus 2024–25 V3</em> (CS Dept)</div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">10:38</div><div class="audit-text"><strong>Student #44</strong> searched "Show me MBA question paper 2023" — 3 results returned</div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">10:21</div><div class="audit-text"><strong>Udit Verma</strong> restored <em>Hostel Rules</em> to Version 1 (was V2)</div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">10:05</div><div class="audit-text"><strong>Admin</strong> added user <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="592b302a31301930302a2d77383a773037">[email&#160;protected]</a></em> with role Faculty</div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">09:58</div><div class="audit-text"><strong>Priya Sharma</strong> downloaded <em>Fee Bonafide Certificate Template V1</em></div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">09:44</div><div class="audit-text"><strong>Priya Sharma</strong> logged in from Kiosk-02 (IP: 192.168.1.44)</div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">09:31</div><div class="audit-text"><strong>Student #78</strong> searched "exam schedule nov 2024" — Document not found, human handoff triggered</div></div>
+              <div class="audit-item" style="padding:14px 0;"><div class="audit-time">09:15</div><div class="audit-text"><strong>Admin</strong> changed <em>Amit Kumar</em> account status to Inactive</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div><!-- /admin -->
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── Navigation ── */
+let selectedRole = 'student';
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function showLanding() { showView('landing'); }
+function showLogin()   { showView('login'); }
+function showDash(role) { showView(role); }
+
+function doLogin() {
+  showDash(selectedRole);
+}
+
+function setRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + role).classList.add('active');
+}
+
+/* ── Dashboard page switching ── */
+function switchPage(dashPrefix, pageSuffix, navEl, titleEl, title) {
+  const dash = document.getElementById('view-' + dashPrefix);
+  dash.querySelectorAll('.dash-page').forEach(p => p.classList.remove('active'));
+  dash.querySelectorAll('.dash-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(dashPrefix.charAt(0) + '-' + pageSuffix).classList.add('active');
+  navEl.classList.add('active');
+  document.getElementById(titleEl).textContent = title;
+}
+
+function switchStudentPage(page, el) {
+  const titles = { search:'Search Documents', chat:'AI Chat', downloads:'My Downloads' };
+  switchPage('student', page, el, 'student-topbar-title', titles[page]);
+}
+function switchFacultyPage(page, el) {
+  const titles = { upload:'Upload Document', mydocs:'My Documents', versions:'Version History' };
+  switchPage('faculty', page, el, 'faculty-topbar-title', titles[page]);
+}
+function switchAdminPage(page, el) {
+  const titles = { overview:'System Dashboard', docs:'All Documents', users:'User Management', audit:'Audit Log' };
+  switchPage('admin', page, el, 'admin-topbar-title', titles[page]);
+}
+
+/* ── Upload drag/drop ── */
+function dOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('over'); }
+function dLeave(id) { document.getElementById(id).classList.remove('over'); }
+function dDrop(e, id) { e.preventDefault(); dLeave(id); startUpload(); }
+function startUpload() {
+  let p = 0;
+  const bar = document.getElementById('f-prog');
+  const pct = document.getElementById('f-pct');
+  bar.style.width = '0%'; pct.textContent = '0%';
+  const iv = setInterval(() => {
+    p = Math.min(p + Math.random() * 10, 100);
+    bar.style.width = p + '%';
+    pct.textContent = Math.floor(p) + '%';
+    if (p >= 100) clearInterval(iv);
+  }, 100);
+}
+
+/* ── Student chat/* ── Student chat ── */
+function sendStudentChat() {
+  const input = document.getElementById('s-chat-input');
+  const msg = input.value.trim(); if (!msg) return;
+  appendMsg('student-chat-msgs', msg, 'user');
+  input.value = '';
+  setTimeout(() => {
+    appendMsg('student-chat-msgs', `Searching for "<strong>${msg}</strong>"… I found 2 relevant documents. Please visit the Search page for full results with confidence scores and download options.`, 'ai');
+  }, 800);
+}
+function studentSuggestion(el) {
+  document.getElementById('s-chat-input').value = el.textContent;
+  sendStudentChat();
+}
+function appendMsg(containerId, text, type) {
+  const c = document.getElementById(containerId);
+  const d = document.createElement('div');
+  d.className = 'chat-bubble' + (type === 'user' ? ' user' : '');
+  const av = type === 'ai'
+    ? '<div class="bubble-av ai">AI</div>'
+    : '<div class="bubble-av me">👤</div>';
+  d.innerHTML = av + `<div class="bubble-txt">${text}</div>`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+/* ══════════════════════════════════════════
+   NAVBAR HOVER → SMOOTH SCROLL TO SECTION
+   Hover for 400ms triggers scroll. Moving
+   away cancels the timer.
+══════════════════════════════════════════ */
+(function() {
+  const map = {
+    'nav-features': 'features',
+    'nav-how':      'how',
+    'nav-roles':    'roles',
+    'nav-contact':  'contact'
+  };
+
+  Object.entries(map).forEach(([linkId, sectionId]) => {
+    const link = document.getElementById(linkId);
+    if (!link) return;
+    let timer = null;
+
+    link.addEventListener('mouseenter', () => {
+      // highlight immediately
+      link.classList.add('nav-hover-active');
+      // scroll after 350ms hover dwell
+      timer = setTimeout(() => {
+        const target = document.getElementById(sectionId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // flash the section briefly
+          target.classList.add('section-flash');
+          setTimeout(() => target.classList.remove('section-flash'), 800);
+        }
+      }, 350);
+    });
+
+    link.addEventListener('mouseleave', () => {
+      clearTimeout(timer);
+      link.classList.remove('nav-hover-active');
+    });
+
+    // clicking also scrolls (prevent default hash jump, do smooth instead)
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      clearTimeout(timer);
+      const target = document.getElementById(sectionId);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+})();
+</script>
+</body>
+</html>
