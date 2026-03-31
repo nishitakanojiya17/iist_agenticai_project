@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — VidyaVault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --navy: #0d1b2a;
+            --navy2: #112236;
+            --gold: #c9973a;
+            --gold2: #f5c842;
+            --cream: #f5f0e8;
+            --cream2: #ede8dc;
+            --white: #ffffff;
+            --muted: #8a9ab5;
+            --green: #22c55e;
+            --border: rgba(201, 151, 58, 0.18);
+            --border2: rgba(201, 151, 58, 0.35);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            overflow-x: hidden;
+            cursor: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transition: transform .15s ease;
+            mix-blend-mode: difference
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transition: all .12s ease;
+            opacity: .6
+        }
+
+        .cursor.expand {
+            transform: scale(3)
+        }
+
+        .cursor-ring.expand {
+            transform: scale(1.5);
+            opacity: .3
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+            transition: all .4s ease
+        }
+
+        nav.scrolled {
+            background: rgba(13, 27, 42, .92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none
+        }
+
+        .nav-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--navy)
+        }
+
+        .nav-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white)
+        }
+
+        .nav-name span {
+            color: var(--gold)
+        }
+
+        .nav-sub {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, .65);
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: color .2s;
+            letter-spacing: .3px
+        }
+
+        .nav-links a:hover {
+            color: var(--gold)
+        }
+
+        /* ── BACKGROUND ── */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .hero-bg-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 20% 40%, rgba(201, 151, 58, .12) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 60%, rgba(17, 34, 54, .8) 0%, transparent 60%)
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: .15;
+            animation: orbFloat 8s ease-in-out infinite alternate
+        }
+
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: #c9973a;
+            top: -150px;
+            right: -100px;
+            animation-delay: 0s
+        }
+
+        .orb2 {
+            width: 350px;
+            height: 350px;
+            background: #1a3a6e;
+            bottom: -50px;
+            left: 10%;
+            animation-delay: -3s
+        }
+
+        @keyframes orbFloat {
+            0% {
+                transform: translate(0, 0) scale(1)
+            }
+
+            100% {
+                transform: translate(30px, 40px) scale(1.15)
+            }
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(201, 151, 58, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(201, 151, 58, .04) 1px, transparent 1px);
+            background-size: 80px 80px;
+            z-index: 0
+        }
+
+        /* ── SIGN IN PAGE MAIN ── */
+        .signin-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 120px 5% 60px;
+            min-height: 100vh
+        }
+
+        .signin-card {
+            background: rgba(17, 34, 54, .65);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 440px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+            animation: fadeSlideUp .8s ease both
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .signin-header {
+            text-align: center;
+            margin-bottom: 32px
+        }
+
+        .signin-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px
+        }
+
+        .signin-sub {
+            font-size: 14px;
+            color: var(--muted)
+        }
+
+        .role-tabs {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, .04);
+            padding: 6px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border)
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, .6);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all .2s;
+            border: 1px solid transparent
+        }
+
+        .role-tab.active {
+            background: rgba(201, 151, 58, .15);
+            color: var(--gold);
+            border-color: var(--border2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .2)
+        }
+
+        .role-tab:hover:not(.active) {
+            color: var(--white);
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .form-group {
+            margin-bottom: 20px
+        }
+
+        .form-label {
+            font-size: 12.5px;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: block;
+            letter-spacing: .3px;
+            font-weight: 500
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, .05);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, .1)
+        }
+
+        .form-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(201, 151, 58, .1), inset 0 2px 4px rgba(0, 0, 0, .1)
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, .3)
+        }
+
+        .options-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            font-size: 13px
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            cursor: pointer
+        }
+
+        .remember-me input {
+            accent-color: var(--gold);
+            width: 14px;
+            height: 14px;
+            cursor: pointer
+        }
+
+        .forgot-pass {
+            color: var(--gold);
+            text-decoration: none;
+            transition: color .2s;
+            font-weight: 500
+        }
+
+        .forgot-pass:hover {
+            color: var(--gold2)
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--gold);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all .25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(201, 151, 58, .2)
+        }
+
+        .btn-primary:hover {
+            background: var(--gold2);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(201, 151, 58, .35)
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 28px 0;
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .divider span {
+            padding: 0 14px
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 14px;
+            background: var(--white);
+            border: 1px solid var(--white);
+            color: var(--navy);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            transform: translateY(-1px)
+        }
+
+        .btn-google img {
+            width: 18px;
+            height: 18px
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        .signup-link a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color .2s
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline
+        }
+
+        @media(max-width:480px) {
+            .signin-card {
+                padding: 36px 24px
+            }
+
+            .signin-title {
+                font-size: 32px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CURSOR -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- BACKGROUND -->
+    <div class="hero-bg">
+        <div class="hero-bg-gradient"></div>
+        <div class="grid-overlay"></div>
+        <div class="floating-orb orb1"></div>
+        <div class="floating-orb orb2"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <a href="index.html" class="nav-brand">
+            <div class="nav-logo">VV</div>
+            <div>
+                <div class="nav-name">Vidya<span>Vault</span></div>
+                <div class="nav-sub">Indore Institute of Science & Technology</div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html#features">Features</a>
+            <a href="index.html#how">How It Works</a>
+            <a href="index.html#contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- SIGN IN MAIN -->
+    <main class="signin-wrapper">
+        <div class="signin-card">
+            <div class="signin-header">
+                <h1 class="signin-title">Welcome Back</h1>
+                <p class="signin-sub">Sign in to access your document library</p>
+            </div>
+
+            <!-- Role Tabs (Optional, but good for UX) -->
+            <div class="role-tabs">
+                <div class="role-tab active" onclick="selectRole(this, 'student')">Student</div>
+                <div class="role-tab" onclick="selectRole(this, 'faculty')">Faculty</div>
+                <div class="role-tab" onclick="selectRole(this, 'admin')">Admin</div>
+            </div>
+
+            <form onsubmit="event.preventDefault(); handleLogin();">
+                <div class="form-group">
+                    <label class="form-label" id="id-label">Student ID</label>
+                    <input type="text" class="form-input" id="id-input" placeholder="e.g. 0818CS201..." required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <div class="options-row">
+                    <label class="remember-me">
+                        <input type="checkbox"> Remember me
+                    </label>
+                    <a href="#" class="forgot-pass">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Sign In →
+                </button>
+
+                <div class="divider"><span>OR CONTINUE WITH</span></div>
+
+                <button type="button" class="btn-google">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px">
+                        <path fill="#FFC107"
+                            d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+                        <path fill="#FF3D00"
+                            d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+                        <path fill="#4CAF50"
+                            d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+                        <path fill="#1976D2"
+                            d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+                    </svg>
+                    Sign in with Google
+                </button>
+            </form>
+
+            <div class="signup-link">
+                Need an account? <a href="#">Contact Administration</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ── CURSOR ──
+        const cur = document.getElementById('cursor');
+        const ring = document.getElementById('cursorRing');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx - 5 + 'px'; cur.style.top = my - 5 + 'px' });
+        setInterval(() => { rx += (mx - rx) * .15; ry += (my - ry) * .15; ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px' }, 16);
+        document.querySelectorAll('a,button,.role-tab,input[type="checkbox"]').forEach(el => {
+            el.addEventListener('mouseenter', () => { cur.classList.add('expand'); ring.classList.add('expand') });
+            el.addEventListener('mouseleave', () => { cur.classList.remove('expand'); ring.classList.remove('expand') });
+        });
+
+        // ── NAV SCROLL ──
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', scrollY > 20);
+        });
+
+        // ── ROLE SELECTOR ──
+        let currentRole = 'student';
+        
+        function selectRole(element, role) {
+            currentRole = role;
+            // Update active tab
+            document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            // Update labels and placeholders
+            const idLabel = document.getElementById('id-label');
+            const idInput = document.getElementById('id-input');
+
+            if (role === 'student') {
+                idLabel.textContent = 'Student ID';
+                idInput.placeholder = 'e.g. 0818CS201...';
+            } else if (role === 'faculty') {
+                idLabel.textContent = 'Faculty ID / Email';
+                idInput.placeholder = 'e.g. name@iist.ac.in';
+            } else if (role === 'admin') {
+                idLabel.textContent = 'Admin Username';
+                idInput.placeholder = 'admin_user';
+            }
+        }
+        function handleLogin() {
+            if (currentRole === 'student') {
+                window.location.href = 'dasboard.html';
+            } else if (currentRole === 'faculty') {
+                window.location.href = 'teacher-dashboard.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

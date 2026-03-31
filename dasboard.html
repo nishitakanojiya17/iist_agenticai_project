@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard — VidyaVault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --navy: #0d1b2a;
+            --navy2: #112236;
+            --gold: #c9973a;
+            --gold2: #f5c842;
+            --white: #ffffff;
+            --muted: #8a9ab5;
+            --green: #22c55e;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --border: rgba(201, 151, 58, 0.18);
+            --border2: rgba(201, 151, 58, 0.35);
+        }
+
+        html {
+            overflow: hidden
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--navy);
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            cursor: none
+        }
+
+        /* ── CUSTOM CURSOR ── */
+        .cursor {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transition: transform .15s ease;
+            mix-blend-mode: difference
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transition: all .12s ease;
+            opacity: .6
+        }
+
+        .cursor.expand {
+            transform: scale(3)
+        }
+
+        .cursor-ring.expand {
+            transform: scale(1.5);
+            opacity: .3
+        }
+
+        /* ── BACKGROUND ── */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .hero-bg-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 20% 40%, rgba(201, 151, 58, .08) 0%, transparent 80%), radial-gradient(ellipse 60% 80% at 80% 60%, rgba(17, 34, 54, .8) 0%, transparent 60%)
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(201, 151, 58, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(201, 151, 58, .04) 1px, transparent 1px);
+            background-size: 80px 80px;
+            z-index: 0
+        }
+
+        /* ── LAYOUT ── */
+        .app-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            margin: 20px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: rgba(17, 34, 54, .6);
+            backdrop-filter: blur(24px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .5)
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 260px;
+            background: rgba(13, 27, 42, .8);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0;
+            transition: all .3s
+        }
+
+        .brand {
+            padding: 0 24px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none
+        }
+
+        .brand-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--navy)
+        }
+
+        .brand-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white)
+        }
+
+        .brand-name span {
+            color: var(--gold)
+        }
+
+        .user-profile {
+            margin: 0 16px 16px;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(201, 151, 58, .08);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .user-av {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold), #a07020);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--navy)
+        }
+
+        .user-info {
+            flex: 1
+        }
+
+        .user-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 2px
+        }
+
+        .user-role {
+            font-size: 10px;
+            color: var(--gold);
+            letter-spacing: .5px;
+            text-transform: uppercase
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px
+        }
+
+        .nav-label {
+            padding: 16px 16px 8px;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            font-size: 13.5px;
+            color: rgba(255, 255, 255, .6);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all .2s;
+            font-weight: 500;
+            text-decoration: none
+        }
+
+        .nav-item:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, .05)
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+            background: rgba(201, 151, 58, .1);
+            box-shadow: inset 3px 0 0 var(--gold)
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center
+        }
+
+        .badge {
+            margin-left: auto;
+            background: var(--gold);
+            color: var(--navy);
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px
+        }
+
+        .badge-red {
+            background: #ef4444;
+            color: white
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color .2s;
+            font-size: 13px;
+            font-weight: 500
+        }
+
+        .logout-btn:hover {
+            color: #ef4444
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative
+        }
+
+        /* TOPBAR */
+        .topbar {
+            height: 70px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background: rgba(17, 34, 54, .4)
+        }
+
+        .page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--white)
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid transparent;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, .1);
+            border-color: rgba(255, 255, 255, .2)
+        }
+
+        /* CONTENT AREA */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+            position: relative
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 6px
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .1);
+            border-radius: 6px
+        }
+
+        /* SECTIONS (SPA logic) */
+        .section {
+            display: none;
+            animation: fadeUp .4s ease both
+        }
+
+        .section.active {
+            display: block
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* ── ACADEMIC SECTION ── */
+        .search-header {
+            background: rgba(201, 151, 58, .08);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .search-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent)
+        }
+
+        .search-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px
+        }
+
+        .search-sub {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .6);
+            margin-bottom: 24px
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            max-width: 600px;
+            margin: 0 auto
+        }
+
+        .search-input {
+            flex: 1;
+            background: rgba(13, 27, 42, .8);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: all .2s;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, .2)
+        }
+
+        .search-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(201, 151, 58, .15)
+        }
+
+        .search-btn {
+            padding: 0 24px;
+            background: var(--gold);
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all .2s
+        }
+
+        .search-btn:hover {
+            background: var(--gold2);
+            transform: scale(1.02)
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px
+        }
+
+        .cat-card {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all .2s;
+            text-align: center
+        }
+
+        .cat-card:hover {
+            background: rgba(201, 151, 58, .08);
+            border-color: var(--border2);
+            transform: translateY(-4px)
+        }
+
+        .cat-icon {
+            font-size: 28px;
+            margin-bottom: 12px
+        }
+
+        .cat-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px
+        }
+
+        .cat-count {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .doc-list-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .doc-card {
+            background: rgba(255, 255, 255, .02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            transition: all .2s
+        }
+
+        .doc-card:hover {
+            background: rgba(255, 255, 255, .05);
+            border-color: rgba(255, 255, 255, .2)
+        }
+
+        .doc-info {
+            display: flex;
+            align-items: center;
+            gap: 16px
+        }
+
+        .doc-type-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--navy);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px
+        }
+
+        .doc-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px
+        }
+
+        .doc-meta {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            gap: 12px
+        }
+
+        .doc-tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600
+        }
+
+        .tag-blue {
+            background: rgba(59, 130, 246, .15);
+            color: #60a5fa
+        }
+
+        .tag-purple {
+            background: rgba(139, 92, 246, .15);
+            color: #a78bfa
+        }
+
+        .tag-gold {
+            background: rgba(201, 151, 58, .15);
+            color: var(--gold)
+        }
+
+        .doc-actions {
+            display: flex;
+            gap: 8px
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: 'DM Sans', sans-serif;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--white)
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, .1)
+        }
+
+        .action-btn.primary {
+            background: var(--gold);
+            color: var(--navy);
+            border: none
+        }
+
+        .action-btn.primary:hover {
+            background: var(--gold2)
+        }
+
+        /* ── CLUBS SECTION ── */
+        .clubs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px
+        }
+
+        .club-card {
+            background: rgba(255, 255, 255, .03);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all .3s
+        }
+
+        .club-card:hover {
+            border-color: var(--border2);
+            background: rgba(255, 255, 255, .05);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .3)
+        }
+
+        .club-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px
+        }
+
+        .club-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: var(--navy);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px
+        }
+
+        .club-status {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        .status-open {
+            background: rgba(34, 197, 94, .15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, .3)
+        }
+
+        .status-closed {
+            background: rgba(255, 255, 255, .05);
+            color: var(--muted);
+            border: 1px solid rgba(255, 255, 255, .1)
+        }
+
+        .club-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 8px
+        }
+
+        .club-desc {
+            font-size: 13.5px;
+            color: rgba(255, 255, 255, .6);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            height: 64px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical
+        }
+
+        .club-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, .05)
+        }
+
+        .club-members {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .club-members b {
+            color: var(--white)
+        }
+
+        .club-apply {
+            padding: 10px 20px;
+            background: var(--navy);
+            color: var(--gold);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            text-decoration: none
+        }
+
+        .club-apply:hover {
+            background: var(--gold);
+            color: var(--navy)
+        }
+
+        .notifications-panel {
+            margin-top: 40px;
+            background: rgba(17, 34, 54, .8);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px
+        }
+
+        .notif-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .notif-item {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, .05);
+            display: flex;
+            gap: 16px
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0
+        }
+
+        .notif-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, .15);
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px
+        }
+
+        .notif-content {
+            flex: 1
+        }
+
+        .notif-head {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px
+        }
+
+        .notif-subject {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white)
+        }
+
+        .notif-time {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .notif-body {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .6);
+            line-height: 1.5
+        }
+
+        /* ── AI CHAT SECTION ── */
+        .chat-container {
+            height: calc(100vh - 160px);
+            display: flex;
+            flex-direction: column;
+            background: rgba(13, 27, 42, .6);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden
+        }
+
+        .chat-window {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px
+        }
+
+        .chat-msg {
+            display: flex;
+            gap: 12px;
+            max-width: 85%
+        }
+
+        .chat-msg.bot {
+            align-self: flex-start
+        }
+
+        .chat-msg.user {
+            align-self: flex-end;
+            flex-direction: row-reverse
+        }
+
+        .chat-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0
+        }
+
+        .msg-bot-av {
+            background: var(--gold);
+            color: var(--navy);
+            font-family: 'Cormorant Garamond', serif
+        }
+
+        .msg-user-av {
+            background: var(--blue);
+            color: white
+        }
+
+        .chat-bub {
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.6
+        }
+
+        .chat-msg.bot .chat-bub {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-top-left-radius: 4px;
+            color: rgba(255, 255, 255, .85)
+        }
+
+        .chat-msg.user .chat-bub {
+            background: var(--gold);
+            color: var(--navy);
+            font-weight: 500;
+            border-top-right-radius: 4px
+        }
+
+        .chat-input-area {
+            padding: 16px 24px;
+            background: rgba(17, 34, 54, .8);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border .2s
+        }
+
+        .chat-input:focus {
+            border-color: var(--gold)
+        }
+
+        .chat-send {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: var(--gold);
+            color: var(--navy);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: 18px
+        }
+
+        .chat-send:hover {
+            background: var(--gold2);
+            transform: scale(1.05)
+        }
+
+        /* ── SAVED SECTION ── */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted)
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: .5
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px
+        }
+
+        @media(max-width:900px) {
+            .app-container {
+                flex-direction: column;
+                margin: 10px
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 10px 20px;
+                align-items: center;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                height: auto;
+                overflow-x: auto
+            }
+
+            .brand,
+            .user-profile,
+            .nav-label,
+            .sidebar-footer {
+                display: none
+            }
+
+            .nav-menu {
+                flex-direction: row;
+                width: 100%;
+                justify-content: space-around;
+                padding: 0
+            }
+
+            .nav-item span {
+                display: none
+            }
+
+            .nav-icon {
+                font-size: 20px
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .clubs-grid {
+                grid-template-columns: 1fr
+            }
+
+            .topbar {
+                padding: 0 20px
+            }
+
+            .content-area {
+                padding: 20px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- CURSOR & BG -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="hero-bg">
+        <div class="hero-bg-gradient"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href="index.html" class="brand">
+                <div class="brand-logo">VV</div>
+                <div class="brand-name">Vidya<span>Vault</span></div>
+            </a>
+
+            <div class="user-profile">
+                <div class="user-av">PS</div>
+                <div class="user-info">
+                    <div class="user-name">Priya Sharma</div>
+                    <div class="user-role">Student · CSE Sem 6</div>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-label">Main Menu</div>
+                <a href="#" class="nav-item active" onclick="switchTab('academic', this)">
+                    <div class="nav-icon">📚</div><span>Academic Hub</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('clubs', this)">
+                    <div class="nav-icon">🎯</div><span>College Clubs</span><span class="badge badge-red">2 New</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('chat', this)">
+                    <div class="nav-icon">💬</div><span>AI Study Chat</span><span class="badge">PRO</span>
+                </a>
+                <a href="#" class="nav-item" onclick="switchTab('saved', this)">
+                    <div class="nav-icon">🔖</div><span>My Saved</span>
+                </a>
+            </div>
+
+            <div class="sidebar-footer">
+                <a href="signin.html" class="logout-btn">
+                    <span style="font-size:16px">🚪</span> Sign Out
+                </a>
+            </div>
+        </aside>
+
+        <!-- MAIN AREA -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-title" id="pageTitle">Academic Hub</div>
+                <div class="topbar-actions">
+                    <button class="icon-btn">🔔</button>
+                    <button class="icon-btn">⚙️</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+
+                <!-- ACADEMIC SECTION -->
+                <section id="academic" class="section active">
+                    <div class="search-header">
+                        <h2 class="search-title">Find Academic Resources</h2>
+                        <p class="search-sub">Search across 10,000+ papers, notes, textbooks, and MST practice sets.</p>
+                        <div class="search-box">
+                            <input type="text" class="search-input"
+                                placeholder="e.g., Operating Systems Mid-Sem Paper 2023...">
+                            <button class="search-btn">Search AI</button>
+                        </div>
+                    </div>
+
+                    <div class="category-grid">
+                        <div class="cat-card">
+                            <div class="cat-icon">📄</div>
+                            <div class="cat-name">Previous Papers</div>
+                            <div class="cat-count">2,450 uploads</div>
+                        </div>
+                        <div class="cat-card">
+                            <div class="cat-icon">📓</div>
+                            <div class="cat-name">Class Notes</div>
+                            <div class="cat-count">1,820 uploads</div>
+                        </div>
+                        <div class="cat-card">
+                            <div class="cat-icon">💡</div>
+                            <div class="cat-name">Assignment Help</div>
+                            <div class="cat-count">Solved examples</div>
+                        </div>
+                        <div class="cat-card">
+                            <div class="cat-icon">🎯</div>
+                            <div class="cat-name">MST Practice Sets</div>
+                            <div class="cat-count">By Faculty</div>
+                        </div>
+                    </div>
+
+                    <div class="doc-list-title">
+                        Recently Uploaded
+                        <a href="#"
+                            style="font-size:12px;color:var(--gold);text-decoration:none;font-weight:500;font-family:'DM Sans'">View
+                            All →</a>
+                    </div>
+
+                    <div class="doc-card">
+                        <div class="doc-info">
+                            <div class="doc-type-icon">📝</div>
+                            <div>
+                                <div class="doc-title">Data Structures Full Notes - Unit 1 to 5</div>
+                                <div class="doc-meta">Prof. Sharma <span style="margin:0 6px">•</span> 2 hours ago <span
+                                        class="doc-tag tag-gold" style="margin-left:8px">NOTES</span></div>
+                            </div>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="action-btn">Preview</button>
+                            <button class="action-btn primary">Download</button>
+                        </div>
+                    </div>
+
+                    <div class="doc-card">
+                        <div class="doc-info">
+                            <div class="doc-type-icon">📊</div>
+                            <div>
+                                <div class="doc-title">Computer Networks MST-1 Preparation Paper</div>
+                                <div class="doc-meta">CSE Dept <span style="margin:0 6px">•</span> 1 day ago <span
+                                        class="doc-tag tag-purple" style="margin-left:8px">MST SET</span></div>
+                            </div>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="action-btn">Preview</button>
+                            <button class="action-btn primary">Download</button>
+                        </div>
+                    </div>
+
+                    <div class="doc-card">
+                        <div class="doc-info">
+                            <div class="doc-type-icon">🔍</div>
+                            <div>
+                                <div class="doc-title">DBMS 2023 End-Sem Paper Analysis</div>
+                                <div class="doc-meta">AI Generated <span style="margin:0 6px">•</span> 2 days ago <span
+                                        class="doc-tag tag-blue" style="margin-left:8px">ANALYSIS</span></div>
+                            </div>
+                        </div>
+                        <div class="doc-actions">
+                            <button class="action-btn">Preview</button>
+                            <button class="action-btn primary">Download</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CLUBS SECTION -->
+                <section id="clubs" class="section">
+                    <div class="clubs-grid">
+
+                        <div class="club-card">
+                            <div class="club-header">
+                                <div class="club-logo">💻</div>
+                                <div class="club-status status-open">Recruiting</div>
+                            </div>
+                            <div class="club-name">GeeksforGeeks Chapter IIST</div>
+                            <div class="club-desc">The official programming and technical club. We conduct hackathons,
+                                coding contests, and technical workshops on Web Dev, AI, and DSA.</div>
+                            <div class="club-footer">
+                                <div class="club-members">👥 <b>120+</b> Members</div>
+                                <button class="club-apply">Apply Now</button>
+                            </div>
+                        </div>
+
+                        <div class="club-card">
+                            <div class="club-header">
+                                <div class="club-logo">🎸</div>
+                                <div class="club-status status-closed">Closed</div>
+                            </div>
+                            <div class="club-name">Shruti Alhad - The Music Club</div>
+                            <div class="club-desc">For those who speak the language of music. From classic Indian ragas
+                                to modern rock, join us for jam sessions and annual fest performances.</div>
+                            <div class="club-footer">
+                                <div class="club-members">👥 <b>45</b> Members</div>
+                                <button class="club-apply" style="opacity:0.5;cursor:not-allowed">Application
+                                    Closed</button>
+                            </div>
+                        </div>
+
+                        <div class="club-card">
+                            <div class="club-header">
+                                <div class="club-logo">🤖</div>
+                                <div class="club-status status-open">Open</div>
+                            </div>
+                            <div class="club-name">Robotics & AI Club</div>
+                            <div class="club-desc">Build physical robots, program drones, and dive deep into ML models.
+                                Hardware and software enthusiasts welcome.</div>
+                            <div class="club-footer">
+                                <div class="club-members">👥 <b>80</b> Members</div>
+                                <button class="club-apply">Join Community</button>
+                            </div>
+                        </div>
+
+                        <div class="club-card">
+                            <div class="club-header">
+                                <div class="club-logo">📸</div>
+                                <div class="club-status status-open">Open</div>
+                            </div>
+                            <div class="club-name">Aanjaneya club</div>
+                            <div class="club-desc">Event Management Club. We manage media for all college
+                                events and conduct photo-walks every weekend manage events organising in the college.
+                            </div>
+                            <div class="club-footer">
+                                <div class="club-members">👥 <b>30</b> Members</div>
+                                <button class="club-apply">Apply Now</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="notifications-panel">
+                        <h3 class="notif-title">📢 Club Announcements</h3>
+
+                        <div class="notif-item">
+                            <div class="notif-icon">🚀</div>
+                            <div class="notif-content">
+                                <div class="notif-head"><span class="notif-subject">Web Dev Bootcamp Registration
+                                        Open</span><span class="notif-time">2 hours ago</span></div>
+                                <div class="notif-body">GfG Chapter is hosting a 3-day bootcamp on React and Tailwind
+                                    CSS. Limited seats available. Register via the club portal!</div>
+                            </div>
+                        </div>
+                        <div class="notif-item">
+                            <div class="notif-icon">🎤</div>
+                            <div class="notif-content">
+                                <div class="notif-head"><span class="notif-subject">Auditions for Annual
+                                        Fest</span><span class="notif-time">1 day ago</span></div>
+                                <div class="notif-body">Crescendo is looking for lead guitarists and vocalists for the
+                                    upcoming Synapse Fest. Auditions are this Friday at 4 PM in the Auditorium.</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- AI CHAT SECTION -->
+                <section id="chat" class="section">
+                    <div class="chat-container">
+                        <div class="chat-window">
+
+                            <div class="chat-msg bot">
+                                <div class="chat-av msg-bot-av">VV</div>
+                                <div class="chat-bub">Hello Priya! I am your AI Study Assistant. I have read all the
+                                    syllabus details, uploaded notes, and previous papers. How can I help you study
+                                    today?</div>
+                            </div>
+
+                            <div class="chat-msg user">
+                                <div class="chat-av msg-user-av">PS</div>
+                                <div class="chat-bub">Can you summarize the syllabus for Operating Systems Unit 3? And
+                                    point out the most frequently asked questions.</div>
+                            </div>
+
+                            <div class="chat-msg bot">
+                                <div class="chat-av msg-bot-av">VV</div>
+                                <div class="chat-bub">
+                                    Certainly! <strong>Unit 3 of Operating Systems</strong> focuses on Memory
+                                    Management.
+                                    <br><br>
+                                    Key topics include:
+                                    <br>• Logical vs Physical Address Space
+                                    <br>• Paging & Segmentation
+                                    <br>• Virtual Memory and Demand Paging
+                                    <br>• Page Replacement Algorithms (FIFO, LRU, Optimal)
+                                    <br><br>
+                                    <em>Frequently Asked Questions (based on last 5 years):</em>
+                                    <br>1. Differentiate between Paging and Segmentation (Asked 4 times)
+                                    <br>2. Explain LRU Page replacement algorithm with an example (Asked 3 times)
+                                    <br>3. What is Thrashing? Causes and Prevention (Asked 3 times)
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input"
+                                placeholder="Ask a subject question, request a summary, or find a topic...">
+                            <button class="chat-send">➤</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SAVED SECTION -->
+                <section id="saved" class="section">
+                    <div class="empty-state">
+                        <div class="empty-icon">📂</div>
+                        <h2 class="empty-title">No Saved Documents Yet</h2>
+                        <p>When you bookmark notes, practice sets, or syllabi, they will appear here for quick offline
+                            access.</p>
+                        <button class="action-btn primary" style="margin-top:20px"
+                            onclick="document.querySelectorAll('.nav-item')[0].click()">Explore Documents</button>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // ── SECTION SWITCHING LOGIC ──
+        const titles = {
+            'academic': 'Academic Hub',
+            'clubs': 'College Clubs',
+            'chat': 'AI Study Assistant',
+            'saved': 'My Saved Documents'
+        };
+
+        function switchTab(tabId, el) {
+            // Update Nav
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            // Update Title
+            document.getElementById('pageTitle').textContent = titles[tabId];
+
+            // Update Content
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // ── CURSOR ──
+        const cur = document.getElementById('cursor');
+        const ring = document.getElementById('cursorRing');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx - 5 + 'px'; cur.style.top = my - 5 + 'px' });
+        setInterval(() => { rx += (mx - rx) * .15; ry += (my - ry) * .15; ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px' }, 16);
+
+        document.querySelectorAll('a, button, .cat-card, .club-card, input').forEach(el => {
+            el.addEventListener('mouseenter', () => { cur.classList.add('expand'); ring.classList.add('expand') });
+            el.addEventListener('mouseleave', () => { cur.classList.remove('expand'); ring.classList.remove('expand') });
+        });
+    </script>
+</body>
+
+</html>

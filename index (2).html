@@ -1,0 +1,2790 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidyaVault — AI-Powered Document Library · IIST Indore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --navy: #0d1b2a;
+      --navy2: #112236;
+      --gold: #c9973a;
+      --gold2: #f5c842;
+      --cream: #f5f0e8;
+      --cream2: #ede8dc;
+      --white: #ffffff;
+      --muted: #8a9ab5;
+      --green: #22c55e;
+      --border: rgba(201, 151, 58, 0.18);
+      --border2: rgba(201, 151, 58, 0.35);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--navy);
+      color: var(--white);
+      overflow-x: hidden;
+      cursor: none
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    .cursor {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transition: transform .15s ease;
+      mix-blend-mode: difference
+    }
+
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
+      transition: all .12s ease;
+      opacity: .6
+    }
+
+    .cursor.expand {
+      transform: scale(3)
+    }
+
+    .cursor-ring.expand {
+      transform: scale(1.5);
+      opacity: .3
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      transition: all .4s ease
+    }
+
+    nav.scrolled {
+      background: rgba(13, 27, 42, .92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border)
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none
+    }
+
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      background: var(--gold);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy)
+    }
+
+    .nav-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .nav-name span {
+      color: var(--gold)
+    }
+
+    .nav-sub {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: rgba(255, 255, 255, .65);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: color .2s;
+      letter-spacing: .3px
+    }
+
+    .nav-links a:hover {
+      color: var(--gold)
+    }
+
+    .nav-cta {
+      padding: 9px 22px;
+      background: var(--gold);
+      color: var(--navy);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all .2s;
+      letter-spacing: .3px
+    }
+
+    .nav-cta:hover {
+      background: var(--gold2);
+      transform: translateY(-1px)
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      position: relative;
+      overflow: hidden
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0
+    }
+
+    .hero-bg-gradient {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 20% 40%, rgba(201, 151, 58, .12) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 60%, rgba(17, 34, 54, .8) 0%, transparent 60%)
+    }
+
+    .floating-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: .15;
+      animation: orbFloat 8s ease-in-out infinite alternate
+    }
+
+    .orb1 {
+      width: 500px;
+      height: 500px;
+      background: #c9973a;
+      top: -150px;
+      right: -100px;
+      animation-delay: 0s
+    }
+
+    .orb2 {
+      width: 350px;
+      height: 350px;
+      background: #1a3a6e;
+      bottom: -50px;
+      left: 10%;
+      animation-delay: -3s
+    }
+
+    .orb3 {
+      width: 250px;
+      height: 250px;
+      background: #c9973a;
+      top: 50%;
+      right: 20%;
+      animation-delay: -6s;
+      opacity: .08
+    }
+
+    @keyframes orbFloat {
+      0% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      100% {
+        transform: translate(30px, 40px) scale(1.15)
+      }
+    }
+
+    /* grid lines */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(201, 151, 58, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(201, 151, 58, .04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      z-index: 0
+    }
+
+    /* floating particles */
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleRise linear infinite
+    }
+
+    @keyframes particleRise {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(1)
+      }
+
+      20% {
+        opacity: .6
+      }
+
+      80% {
+        opacity: .3
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-120px) scale(0)
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 600px
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      margin-bottom: 28px;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--gold);
+      text-transform: uppercase;
+      animation: fadeSlideUp .8s ease .2s both
+    }
+
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.7)
+      }
+    }
+
+    h1.hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(42px, 5.5vw, 72px);
+      font-weight: 700;
+      line-height: 1.08;
+      margin-bottom: 24px;
+      animation: fadeSlideUp .8s ease .35s both
+    }
+
+    h1.hero-title em {
+      color: var(--gold);
+      font-style: italic
+    }
+
+    .hero-desc {
+      font-size: 16px;
+      color: rgba(255, 255, 255, .65);
+      line-height: 1.75;
+      margin-bottom: 40px;
+      max-width: 480px;
+      animation: fadeSlideUp .8s ease .5s both
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      animation: fadeSlideUp .8s ease .65s both
+    }
+
+    .btn-primary {
+      padding: 14px 28px;
+      background: var(--gold);
+      color: var(--navy);
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all .25s;
+      letter-spacing: .3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .btn-primary:hover {
+      background: var(--gold2);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(201, 151, 58, .35)
+    }
+
+    .btn-outline {
+      padding: 14px 28px;
+      border: 1.5px solid rgba(255, 255, 255, .25);
+      color: var(--white);
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all .25s
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px)
+    }
+
+    /* hero right — live preview card */
+    .hero-right {
+      position: relative;
+      z-index: 1;
+      margin-left: auto;
+      width: 480px;
+      flex-shrink: 0;
+      animation: fadeSlideLeft .9s ease .4s both
+    }
+
+    @keyframes fadeSlideLeft {
+      from {
+        opacity: 0;
+        transform: translateX(40px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    .preview-card {
+      background: rgba(17, 34, 54, .85);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, .4)
+    }
+
+    .preview-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px
+    }
+
+    .preview-search {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .preview-search span {
+      color: rgba(255, 255, 255, .35);
+      font-size: 13px;
+      font-style: italic
+    }
+
+    .search-cursor {
+      width: 2px;
+      height: 15px;
+      background: var(--gold);
+      animation: blink .8s step-end infinite
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0
+      }
+    }
+
+    .preview-result {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all .3s;
+      animation: resultSlide .5s ease both
+    }
+
+    .preview-result:nth-child(1) {
+      animation-delay: .8s
+    }
+
+    .preview-result:nth-child(2) {
+      animation-delay: 1.1s
+    }
+
+    .preview-result:nth-child(3) {
+      animation-delay: 1.4s
+    }
+
+    @keyframes resultSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .result-left {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .result-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(201, 151, 58, .15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0
+    }
+
+    .result-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 2px
+    }
+
+    .result-meta {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .match-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap
+    }
+
+    .match-high {
+      background: rgba(34, 197, 94, .15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, .3)
+    }
+
+    .match-mid {
+      background: rgba(201, 151, 58, .15);
+      color: var(--gold);
+      border: 1px solid var(--border2)
+    }
+
+    .preview-ai-answer {
+      background: rgba(201, 151, 58, .07);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 15px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, .7);
+      line-height: 1.6;
+      margin-top: 4px
+    }
+
+    .ai-tag {
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 11px;
+      margin-bottom: 5px
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      background: rgba(201, 151, 58, .07);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 5%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px
+    }
+
+    .stat-item {
+      text-align: center
+    }
+
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--gold);
+      display: block;
+      line-height: 1
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: .3px
+    }
+
+    /* ── SECTIONS COMMON ── */
+    section {
+      padding: 100px 5%
+    }
+
+    .section-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: block
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 700;
+      line-height: 1.12;
+      margin-bottom: 16px
+    }
+
+    .section-sub {
+      font-size: 15px;
+      color: rgba(255, 255, 255, .55);
+      line-height: 1.7;
+      max-width: 560px
+    }
+
+    .section-head {
+      margin-bottom: 60px
+    }
+
+    /* ── FEATURES ── */
+    #features {
+      background: var(--navy)
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px
+    }
+
+    .feat-card {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      transition: all .3s ease;
+      position: relative;
+      overflow: hidden
+    }
+
+    .feat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transform: scaleX(0);
+      transition: transform .4s ease
+    }
+
+    .feat-card:hover {
+      border-color: var(--border2);
+      transform: translateY(-6px);
+      background: rgba(201, 151, 58, .05)
+    }
+
+    .feat-card:hover::before {
+      transform: scaleX(1)
+    }
+
+    .feat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(201, 151, 58, .1);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px
+    }
+
+    .feat-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px
+    }
+
+    .feat-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.65
+    }
+
+    /* ── HOW IT WORKS ── */
+    #how {
+      background: rgba(17, 34, 54, .5)
+    }
+
+    .steps-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
+      margin-top: 60px
+    }
+
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: 36px;
+      right: 36px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), rgba(201, 151, 58, .2), var(--gold));
+      z-index: 0;
+      animation: lineGrow 1.5s ease 1s both
+    }
+
+    @keyframes lineGrow {
+      from {
+        transform: scaleX(0)
+      }
+
+      to {
+        transform: scaleX(1)
+      }
+    }
+
+    .step-item {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 0 16px
+    }
+
+    .step-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #a07020);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(201, 151, 58, .35);
+      transition: transform .3s;
+      position: relative
+    }
+
+    .step-circle::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 151, 58, .3);
+      animation: stepPulse 2s ease-in-out infinite
+    }
+
+    @keyframes stepPulse {
+
+      0%,
+      100% {
+        opacity: .5;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: 0;
+        transform: scale(1.3)
+      }
+    }
+
+    .step-item:hover .step-circle {
+      transform: scale(1.1)
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 8px
+    }
+
+    .step-desc {
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.6
+    }
+
+    /* ── ACCESS LEVELS ── */
+    #access {
+      background: var(--cream);
+      color: var(--navy)
+    }
+
+    #access .section-title {
+      color: var(--navy)
+    }
+
+    #access .section-sub {
+      color: rgba(13, 27, 42, .55)
+    }
+
+    #access .section-tag {
+      color: #a07020
+    }
+
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px
+    }
+
+    .role-card {
+      background: var(--white);
+      border: 1.5px solid rgba(13, 27, 42, .1);
+      border-radius: 20px;
+      padding: 28px;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .role-card.featured {
+      border: 2px solid var(--gold);
+      box-shadow: 0 20px 50px rgba(201, 151, 58, .15)
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px
+    }
+
+    .badge-student {
+      background: rgba(34, 197, 94, .12);
+      color: #15803d;
+      border: 1px solid rgba(34, 197, 94, .3)
+    }
+
+    .badge-faculty {
+      background: rgba(201, 151, 58, .12);
+      color: #a07020;
+      border: 1px solid rgba(201, 151, 58, .3)
+    }
+
+    .badge-admin {
+      background: rgba(13, 27, 42, .08);
+      color: var(--navy);
+      border: 1px solid rgba(13, 27, 42, .2)
+    }
+
+    .role-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px
+    }
+
+    .role-desc {
+      font-size: 13px;
+      color: rgba(13, 27, 42, .55);
+      margin-bottom: 20px;
+      line-height: 1.6;
+      font-style: italic
+    }
+
+    .role-features {
+      list-style: none;
+      margin-bottom: 24px
+    }
+
+    .role-features li {
+      font-size: 13px;
+      color: rgba(13, 27, 42, .75);
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .role-features li::before {
+      content: '✓';
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 12px;
+      flex-shrink: 0
+    }
+
+    .role-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      border: none;
+      letter-spacing: .3px
+    }
+
+    .btn-dark {
+      background: var(--navy);
+      color: var(--white)
+    }
+
+    .btn-dark:hover {
+      background: #1a3a6e;
+      transform: translateY(-1px)
+    }
+
+    .btn-outlined {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid rgba(13, 27, 42, .25)
+    }
+
+    .btn-outlined:hover {
+      border-color: var(--gold);
+      color: #a07020;
+      transform: translateY(-1px)
+    }
+
+    /* ── DASHBOARD PREVIEW ── */
+    #dashboard {
+      background: var(--navy);
+      padding: 100px 5%
+    }
+
+    .dash-wrap {
+      background: rgba(17, 34, 54, .6);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, .5)
+    }
+
+    .dash-topbar {
+      background: rgba(13, 27, 42, .9);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .dash-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%
+    }
+
+    .dash-inner {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      min-height: 460px
+    }
+
+    .dash-sidebar {
+      background: var(--navy2);
+      border-right: 1px solid var(--border);
+      padding: 24px 0
+    }
+
+    .dash-brand-sm {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px
+    }
+
+    .dash-brand-sm-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .dash-brand-sm-name span {
+      color: var(--gold)
+    }
+
+    .dash-user-pill {
+      margin: 0 14px 4px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(201, 151, 58, .1);
+      border: 1px solid var(--border)
+    }
+
+    .dash-user-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--white)
+    }
+
+    .dash-user-role {
+      font-size: 10px;
+      color: var(--gold);
+      letter-spacing: .5px
+    }
+
+    .dash-nav-label {
+      padding: 16px 20px 6px;
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted)
+    }
+
+    .dash-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, .55);
+      cursor: pointer;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+      margin: 1px 0
+    }
+
+    .dash-nav-item:hover,
+    .dash-nav-item.active {
+      color: var(--white);
+      background: rgba(201, 151, 58, .08);
+      border-left-color: var(--gold)
+    }
+
+    .dash-main {
+      padding: 24px 28px;
+      overflow: auto
+    }
+
+    .dash-page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px
+    }
+
+    .dash-page-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-style: italic
+    }
+
+    .dash-search-bar {
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px
+    }
+
+    .dash-search-input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px
+    }
+
+    .dash-search-input::placeholder {
+      color: rgba(255, 255, 255, .3)
+    }
+
+    .dash-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px
+    }
+
+    .dash-filter {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all .2s
+    }
+
+    .dash-filter:hover {
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    .dash-ai-answer {
+      background: rgba(201, 151, 58, .07);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px
+    }
+
+    .dash-ai-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 8px rgba(34, 197, 94, .6)
+    }
+
+    .dash-ai-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px
+    }
+
+    .dash-ai-text {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, .75);
+      line-height: 1.6
+    }
+
+    .dash-ai-text strong {
+      color: var(--gold)
+    }
+
+    .dash-doc-item {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      transition: all .2s;
+      animation: docAppear .4s ease both
+    }
+
+    .dash-doc-item:hover {
+      background: rgba(201, 151, 58, .05);
+      border-color: var(--border2)
+    }
+
+    .dash-doc-item:nth-child(1) {
+      animation-delay: .1s
+    }
+
+    .dash-doc-item:nth-child(2) {
+      animation-delay: .2s
+    }
+
+    .dash-doc-item:nth-child(3) {
+      animation-delay: .3s
+    }
+
+    @keyframes docAppear {
+      from {
+        opacity: 0;
+        transform: translateX(-10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    .doc-left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .doc-icon-sm {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: rgba(201, 151, 58, .12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px
+    }
+
+    .doc-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white)
+    }
+
+    .doc-tag {
+      display: inline-block;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle
+    }
+
+    .tag-qp {
+      background: rgba(79, 142, 247, .15);
+      color: #7eb3ff;
+      border: 1px solid rgba(79, 142, 247, .3)
+    }
+
+    .tag-syl {
+      background: rgba(168, 85, 247, .15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, .3)
+    }
+
+    .tag-circ {
+      background: rgba(34, 197, 94, .12);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, .25)
+    }
+
+    .doc-meta {
+      font-size: 11px;
+      color: var(--muted)
+    }
+
+    .doc-right {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .doc-match {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green)
+    }
+
+    .doc-progress {
+      width: 80px;
+      height: 3px;
+      background: rgba(255, 255, 255, .08);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .doc-progress-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 3px;
+      transition: width .8s ease
+    }
+
+    .doc-actions {
+      display: flex;
+      gap: 5px
+    }
+
+    .doc-btn {
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all .2s
+    }
+
+    .doc-btn.primary {
+      background: rgba(201, 151, 58, .15);
+      border-color: var(--border2);
+      color: var(--gold)
+    }
+
+    .doc-btn:hover {
+      transform: translateY(-1px)
+    }
+
+    /* ── TECH STACK ── */
+    #tech {
+      background: rgba(17, 34, 54, .4);
+      padding: 80px 5%
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+      margin-top: 48px
+    }
+
+    .tech-pill {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 12px;
+      text-align: center;
+      transition: all .25s
+    }
+
+    .tech-pill:hover {
+      background: rgba(201, 151, 58, .07);
+      border-color: var(--border2);
+      transform: translateY(-4px)
+    }
+
+    .tech-pill-icon {
+      font-size: 24px;
+      margin-bottom: 8px
+    }
+
+    .tech-pill-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--white)
+    }
+
+    .tech-pill-type {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--navy);
+      padding: 100px 5%
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center
+    }
+
+    .contact-left .section-title {
+      margin-bottom: 20px
+    }
+
+    .contact-left p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 32px
+    }
+
+    .contact-info-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px
+    }
+
+    .contact-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(201, 151, 58, .1);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0
+    }
+
+    .contact-info-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 2px
+    }
+
+    .contact-info-val {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--white)
+    }
+
+    .contact-form {
+      background: rgba(17, 34, 54, .6);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px
+    }
+
+    .form-group {
+      margin-bottom: 14px
+    }
+
+    .form-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+      letter-spacing: .3px
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .form-input:focus {
+      border-color: var(--gold)
+    }
+
+    .form-input::placeholder {
+      color: rgba(255, 255, 255, .25)
+    }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 110px
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .3px
+    }
+
+    .form-submit:hover {
+      background: var(--gold2);
+      transform: translateY(-2px)
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: rgba(13, 27, 42, .95);
+      border-top: 1px solid var(--border);
+      padding: 50px 5% 30px
+    }
+
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px
+    }
+
+    .footer-brand-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.7
+    }
+
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: .5px;
+      margin-bottom: 16px
+    }
+
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 8px;
+      transition: color .2s
+    }
+
+    .footer-col a:hover {
+      color: var(--gold)
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity .7s ease, transform .7s ease
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: opacity .7s ease, transform .7s ease
+    }
+
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0)
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity .7s ease, transform .7s ease
+    }
+
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0)
+    }
+
+    /* ── CHATBOT ── */
+    #vv-chat-fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 9000;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #a07020);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 28px rgba(201, 151, 58, .45);
+      transition: transform .25s, box-shadow .25s
+    }
+
+    #vv-chat-fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 36px rgba(201, 151, 58, .55)
+    }
+
+    #vv-chat-fab::before {
+      content: '';
+      position: absolute;
+      inset: -7px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(201, 151, 58, .3);
+      animation: fabPulse 2.5s ease-out infinite
+    }
+
+    @keyframes fabPulse {
+      0% {
+        transform: scale(1);
+        opacity: .6
+      }
+
+      70% {
+        transform: scale(1.5);
+        opacity: 0
+      }
+
+      100% {
+        transform: scale(1.5);
+        opacity: 0
+      }
+    }
+
+    #vv-chat-fab svg {
+      width: 26px;
+      height: 26px;
+      fill: var(--navy)
+    }
+
+    #vv-chat-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--green);
+      border: 2px solid var(--navy);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    #vv-chatbox {
+      position: fixed;
+      bottom: 100px;
+      right: 28px;
+      z-index: 8999;
+      width: 380px;
+      max-height: 580px;
+      background: var(--navy2);
+      border: 1px solid var(--border2);
+      border-radius: 22px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+      display: flex;
+      flex-direction: column;
+      transform: scale(.9) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: bottom right;
+      transition: all .28s cubic-bezier(.22, 1, .36, 1)
+    }
+
+    #vv-chatbox.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .vv-chat-header {
+      background: linear-gradient(135deg, #1a3a6e, var(--navy));
+      border-bottom: 1px solid var(--border);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 22px 22px 0 0;
+      flex-shrink: 0
+    }
+
+    .vv-chat-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      flex-shrink: 0
+    }
+
+    .vv-chat-hname {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .vv-chat-hstatus {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 1px
+    }
+
+    .vv-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(34, 197, 94, .7)
+    }
+
+    .vv-chat-close {
+      margin-left: auto;
+      width: 30px;
+      height: 30px;
+      background: rgba(255, 255, 255, .08);
+      border: none;
+      border-radius: 8px;
+      color: rgba(255, 255, 255, .6);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s
+    }
+
+    .vv-chat-close:hover {
+      background: rgba(255, 255, 255, .15);
+      color: var(--white)
+    }
+
+    .vv-chat-chips {
+      padding: 10px 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .vv-chip {
+      padding: 4px 11px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .18s;
+      font-family: 'DM Sans', sans-serif
+    }
+
+    .vv-chip:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201, 151, 58, .05)
+    }
+
+    .vv-chat-msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 200px;
+      max-height: 320px
+    }
+
+    .vv-chat-msgs::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .vv-chat-msgs::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 3px
+    }
+
+    .vv-msg {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      animation: msgPop .22s ease
+    }
+
+    @keyframes msgPop {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .vv-msg.user {
+      flex-direction: row-reverse
+    }
+
+    .vv-msg-av {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 2px
+    }
+
+    .vv-bot-av {
+      background: var(--gold);
+      color: var(--navy);
+      font-family: 'Cormorant Garamond', serif
+    }
+
+    .vv-user-av {
+      background: #1a3a6e;
+      color: var(--gold)
+    }
+
+    .vv-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.55;
+      word-break: break-word
+    }
+
+    .vv-msg.bot .vv-bubble {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid var(--border);
+      color: rgba(255, 255, 255, .85);
+      border-bottom-left-radius: 4px
+    }
+
+    .vv-msg.user .vv-bubble {
+      background: linear-gradient(135deg, var(--gold), #a07020);
+      color: var(--navy);
+      font-weight: 500;
+      border-bottom-right-radius: 4px
+    }
+
+    .vv-src-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 6px
+    }
+
+    .vv-src {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 8px;
+      background: rgba(201, 151, 58, .1);
+      color: var(--gold);
+      border: 1px solid var(--border)
+    }
+
+    .vv-typing {
+      display: flex;
+      gap: 4px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      border-bottom-left-radius: 4px;
+      width: fit-content
+    }
+
+    .vv-typing span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: typDot 1.2s ease infinite
+    }
+
+    .vv-typing span:nth-child(2) {
+      animation-delay: .18s
+    }
+
+    .vv-typing span:nth-child(3) {
+      animation-delay: .36s
+    }
+
+    @keyframes typDot {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+        opacity: .4
+      }
+
+      30% {
+        transform: translateY(-7px);
+        opacity: 1
+      }
+    }
+
+    .vv-chat-input-row {
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      background: var(--navy);
+      border-radius: 0 0 22px 22px;
+      flex-shrink: 0
+    }
+
+    #vv-input {
+      flex: 1;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 13px;
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      outline: none;
+      resize: none;
+      max-height: 90px;
+      min-height: 38px;
+      line-height: 1.5;
+      transition: border-color .2s
+    }
+
+    #vv-input:focus {
+      border-color: var(--gold)
+    }
+
+    #vv-input::placeholder {
+      color: rgba(255, 255, 255, .25)
+    }
+
+    #vv-send {
+      width: 38px;
+      height: 38px;
+      background: var(--gold);
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .18s;
+      box-shadow: 0 4px 12px rgba(201, 151, 58, .3)
+    }
+
+    #vv-send:hover {
+      background: var(--gold2);
+      transform: scale(1.05)
+    }
+
+    #vv-send:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none
+    }
+
+    #vv-send svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--navy)
+    }
+
+    .vv-chat-footer {
+      padding: 7px 14px 10px;
+      text-align: center;
+      font-size: 10.5px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      border-radius: 0 0 22px 22px
+    }
+
+    .vv-chat-footer span {
+      color: var(--gold);
+      font-weight: 600
+    }
+
+    /* ── TYPEWRITER ── */
+    .typewriter {
+      border-right: 2px solid var(--gold);
+      animation: blink .75s step-end infinite
+    }
+
+    @media(max-width:900px) {
+
+      .features-grid,
+      .roles-grid,
+      .tech-grid {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .steps-row {
+        flex-wrap: wrap
+      }
+
+      .steps-row::before {
+        display: none
+      }
+
+      .hero-right {
+        display: none
+      }
+
+      .contact-inner {
+        grid-template-columns: 1fr
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .dash-inner {
+        grid-template-columns: 1fr
+      }
+
+      .dash-sidebar {
+        display: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo">VV</div>
+      <div>
+        <div class="nav-name">Vidya<span>Vault</span></div>
+        <div class="nav-sub">Indore Institute of Science & Technology</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#access">Who Uses It</a>
+      <a href="#contact">Contact</a>
+      <a href="signin.html" class="nav-cta">Sign In →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-bg-gradient"></div>
+      <div class="grid-overlay"></div>
+      <div class="floating-orb orb1"></div>
+      <div class="floating-orb orb2"></div>
+      <div class="floating-orb orb3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>AI-Powered Document Library
+      </div>
+      <h1 class="hero-title">Find Any College<br>Document in <em id="hero-typed">Under 3 Seconds</em></h1>
+      <p class="hero-desc">VidyaVault replaces the 15-minute trip to the department office with intelligent AI search —
+        ask in plain English, get instant results, available 24 × 7.</p>
+      <div class="hero-btns">
+        <a href="#dashboard" class="btn-primary">Access VidyaVault →</a>
+        <a href="#how" class="btn-outline">See How It Works</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="preview-card">
+        <div class="preview-label">✦ Live Search Preview</div>
+        <div class="preview-search">
+          <span id="search-typed">"Show me 2024 CS question paper..."</span>
+          <div class="search-cursor"></div>
+        </div>
+        <div class="preview-result">
+          <div class="result-left">
+            <div class="result-icon">📄</div>
+            <div>
+              <div class="result-name">CS End-Sem Question Paper — May 2024</div>
+              <div class="result-meta">Computer Science · Version 1 · May 2024</div>
+            </div>
+          </div>
+          <span class="match-badge match-high">94% MATCH</span>
+        </div>
+        <div class="preview-result">
+          <div class="result-left">
+            <div class="result-icon">📘</div>
+            <div>
+              <div class="result-name">B.Tech CS Syllabus 2024–25</div>
+              <div class="result-meta">Computer Science · Version 3 · Jan 2025</div>
+            </div>
+          </div>
+          <span class="match-badge match-mid">81% MATCH</span>
+        </div>
+        <div class="preview-ai-answer">
+          <div class="ai-tag">✦ AI ANSWER</div>
+          The 2024 CS paper covers Data Structures, DBMS, OS — <strong style="color:var(--gold)">100 marks, 3
+            hours.</strong> <a href="#" style="color:var(--gold);text-decoration:none">See full document →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-strip reveal">
+    <div class="stat-item"><span class="stat-num" data-target="3">&lt;3s</span>
+      <div class="stat-label">Document retrieval time</div>
+    </div>
+    <div class="stat-item"><span class="stat-num">10,000+</span>
+      <div class="stat-label">Documents indexed</div>
+    </div>
+    <div class="stat-item"><span class="stat-num">85%+</span>
+      <div class="stat-label">Search accuracy</div>
+    </div>
+    <div class="stat-item"><span class="stat-num">99%</span>
+      <div class="stat-label">System uptime</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-head reveal">
+      <span class="section-tag">Why VidyaVault</span>
+      <h2 class="section-title">Everything a Modern<br>College Library Needs</h2>
+      <p class="section-sub">Designed specifically for IIST — no more lost files, no more waiting in line.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal" style="transition-delay:.05s">
+        <div class="feat-icon">🔍</div>
+        <div class="feat-title">AI-Powered Search</div>
+        <div class="feat-desc">Type a question in plain English. The system understands meaning — not just keywords —
+          and returns the most relevant documents instantly using RAG + FAISS.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.12s">
+        <div class="feat-icon">📦</div>
+        <div class="feat-title">Automatic Versioning</div>
+        <div class="feat-desc">Every uploaded document creates a new version automatically. Old versions are never lost
+          and can be restored with a single click.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.19s">
+        <div class="feat-icon">📋</div>
+        <div class="feat-title">OCR for Scanned PDFs</div>
+        <div class="feat-desc">Tesseract OCR automatically extracts text from scanned documents, making even old
+          photocopied papers fully searchable by the AI.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.26s">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-title">Role-Based Access</div>
+        <div class="feat-desc">Students, faculty and admins each see only what they need. JWT authentication with full
+          RBAC — zero unauthorized access incidents.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.33s">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Analytics Dashboard</div>
+        <div class="feat-desc">Real-time KPI dashboard, search funnel analytics, most-accessed documents, and one-click
+          PDF & Excel export for administrators.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.4s">
+        <div class="feat-icon">📱</div>
+        <div class="feat-title">QR Code Sharing</div>
+        <div class="feat-desc">Generate instant QR codes for any document — share in classrooms, notice boards, or
+          WhatsApp for zero-friction access.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="section-head reveal" style="text-align:center;max-width:560px;margin:0 auto 0">
+      <span class="section-tag">The Workflow</span>
+      <h2 class="section-title">How a Student Finds a Document</h2>
+      <p class="section-sub" style="margin:0 auto">Six steps, under three seconds, no staff assistance required.</p>
+    </div>
+    <div class="steps-row reveal">
+      <div class="step-item">
+        <div class="step-circle">1</div>
+        <div class="step-title">Type Your Question</div>
+        <div class="step-desc">Ask in plain English — "Show me the 2024 CS question paper"</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">2</div>
+        <div class="step-title">AI Vectorises Query</div>
+        <div class="step-desc">SentenceTransformers converts your words into semantic vectors</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">3</div>
+        <div class="step-title">FAISS Searches Library</div>
+        <div class="step-desc">The vector database finds the most similar document chunks in milliseconds</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">4</div>
+        <div class="step-title">Chunks Retrieved</div>
+        <div class="step-desc">The most relevant passages are pulled from matching documents</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">5</div>
+        <div class="step-title">Llama 3 Writes Answer</div>
+        <div class="step-desc">A local AI model (Ollama) reads the chunks and generates a cited answer</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">6</div>
+        <div class="step-title">Preview & Download</div>
+        <div class="step-desc">You see the answer with links to preview, download, or print the full document</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCESS LEVELS -->
+  <section id="access">
+    <div class="section-head reveal" style="text-align:center;max-width:560px;margin:0 auto 60px">
+      <span class="section-tag">Access Levels</span>
+      <h2 class="section-title" style="color:var(--navy)">Tailored for Every User</h2>
+      <p class="section-sub" style="margin:0 auto;color:rgba(13,27,42,.55)">Different dashboards, different tools — the
+        right experience for each role.</p>
+    </div>
+    <div class="roles-grid">
+      <div class="role-card reveal" style="transition-delay:.05s">
+        <span class="role-badge badge-student">Student</span>
+        <div class="role-title">Self-Service Kiosk</div>
+        <div class="role-desc">Find any document in under 3 seconds without visiting the office.</div>
+        <ul class="role-features">
+          <li>AI-powered natural language search</li>
+          <li>Filter by department, category & year</li>
+          <li>Preview and download documents</li>
+          <li>Chat-style AI conversation interface</li>
+          <li>QR code generation for quick sharing</li>
+        </ul>
+        <button onclick="window.location.href='signin.html'" class="role-btn btn-dark">Enter as Student →</button>
+      </div>
+      <div class="role-card reveal" style="transition-delay:.12s">
+        <span class="role-badge badge-faculty">Faculty</span>
+        <div class="role-title">Upload & Manage</div>
+        <div class="role-desc">Upload documents with auto-OCR, versioning and instant indexing.</div>
+        <ul class="role-features">
+          <li>Drag & drop bulk PDF upload</li>
+          <li>Auto-OCR for scanned documents</li>
+          <li>Automatic version control</li>
+          <li>One-click rollback to any version</li>
+          <li>Metadata tagging & categorisation</li>
+        </ul>
+        <button onclick="window.location.href='signin.html'" class="role-btn btn-outlined">Enter as Faculty →</button>
+      </div>
+      <div class="role-card featured reveal" style="transition-delay:.19s">
+        <span class="role-badge badge-admin">Admin</span>
+        <div class="role-title" style="color:var(--gold)">System Command</div>
+        <div class="role-desc">Full visibility and control over users, documents and analytics.</div>
+        <ul class="role-features">
+          <li>Real-time KPI dashboard</li>
+          <li>Search funnel analytics chart</li>
+          <li>User management & role control</li>
+          <li>Tamper-proof audit log</li>
+          <li>One-click PDF & Excel export</li>
+        </ul>
+        <button onclick="window.location.href='signin.html'" class="role-btn btn-outlined">Enter as Admin →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PREVIEW -->
+  <section id="dashboard" style="padding:100px 5%">
+    <div class="section-head reveal" style="text-align:center;max-width:560px;margin:0 auto 50px">
+      <span class="section-tag">Dashboard Preview</span>
+      <h2 class="section-title">The Student Experience</h2>
+      <p class="section-sub" style="margin:0 auto">Search, find, download — all in one clean interface.</p>
+    </div>
+    <div class="dash-wrap reveal">
+      <div class="dash-topbar">
+        <div class="dash-dot" style="background:#ef4444"></div>
+        <div class="dash-dot" style="background:#f5c842"></div>
+        <div class="dash-dot" style="background:#22c55e"></div>
+        <span
+          style="font-size:12px;color:var(--muted);margin-left:10px;font-family:'DM Mono',monospace">vidyavault.iist.ac.in/student</span>
+      </div>
+      <div class="dash-inner">
+        <div class="dash-sidebar">
+          <div class="dash-brand-sm">
+            <div class="dash-brand-sm-name">Vidya<span>Vault</span></div>
+          </div>
+          <div class="dash-user-pill">
+            <div class="dash-user-name">Priya Sharma</div>
+            <div class="dash-user-role">STUDENT — B.TECH CS, SEM 6</div>
+          </div>
+          <div class="dash-nav-label">Document Access</div>
+          <div class="dash-nav-item active">🔍 Search Documents <span
+              style="margin-left:auto;font-size:9px;background:var(--gold);color:var(--navy);padding:1px 6px;border-radius:4px;font-weight:700">AI</span>
+          </div>
+          <div class="dash-nav-item">💬 AI Chat</div>
+          <div class="dash-nav-item">⬇ My Downloads</div>
+        </div>
+        <div class="dash-main">
+          <div class="dash-page-title">Find Your Documents</div>
+          <div class="dash-page-sub">Ask in plain English — the AI will find and summarise it for you</div>
+          <div class="dash-search-bar">
+            <span style="color:var(--muted);font-size:15px">🔍</span>
+            <input class="dash-search-input" placeholder="Show me the 2024 CS question paper" readonly>
+            <button
+              style="padding:6px 16px;background:var(--gold);color:var(--navy);border:none;border-radius:7px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Search</button>
+          </div>
+          <div class="dash-filters">
+            <select class="dash-filter">
+              <option>All Categories</option>
+            </select>
+            <select class="dash-filter">
+              <option>All Departments</option>
+            </select>
+            <select class="dash-filter">
+              <option>All Years</option>
+            </select>
+          </div>
+          <div class="dash-ai-answer">
+            <div><span class="dash-ai-dot"></span><span class="dash-ai-label">AI ANSWER</span></div>
+            <div class="dash-ai-text">Based on documents in the IIST library, I found the <strong>2024 B.Tech CS
+                End-Semester Question Paper (May 2024)</strong>. It covers Data Structures, Algorithms, DBMS, and
+              Operating Systems — 4 sections, 100 marks, 3-hour duration. You can preview or download it below.</div>
+          </div>
+          <div class="dash-doc-item">
+            <div class="doc-left">
+              <div class="doc-icon-sm">📄</div>
+              <div>
+                <div class="doc-name">CS End-Sem Question Paper — May 2024 <span class="doc-tag tag-qp">Q.PAPER</span>
+                </div>
+                <div class="doc-meta">🖥 Computer Science &nbsp; 📅 May 2024 &nbsp; 🏷 Version 1</div>
+                <div class="doc-progress" style="margin-top:5px">
+                  <div class="doc-progress-fill" style="width:94%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="doc-right">
+              <span class="doc-match">94%</span>
+              <div class="doc-actions">
+                <button class="doc-btn">⚲ Preview</button>
+                <button class="doc-btn primary">⬇ Download</button>
+                <button class="doc-btn">⬛ QR</button>
+              </div>
+            </div>
+          </div>
+          <div class="dash-doc-item">
+            <div class="doc-left">
+              <div class="doc-icon-sm">📘</div>
+              <div>
+                <div class="doc-name">B.Tech CS Syllabus 2024–25 <span class="doc-tag tag-syl">SYLLABUS</span></div>
+                <div class="doc-meta">🖥 Computer Science &nbsp; 📅 Jan 2025 &nbsp; 🏷 Version 3</div>
+                <div class="doc-progress" style="margin-top:5px">
+                  <div class="doc-progress-fill" style="width:81%;background:var(--gold)"></div>
+                </div>
+              </div>
+            </div>
+            <div class="doc-right">
+              <span class="doc-match" style="color:var(--gold)">81%</span>
+              <div class="doc-actions">
+                <button class="doc-btn">⚲ Preview</button>
+                <button class="doc-btn primary">⬇ Download</button>
+                <button class="doc-btn">⬛ QR</button>
+              </div>
+            </div>
+          </div>
+          <div class="dash-doc-item">
+            <div class="doc-left">
+              <div class="doc-icon-sm">📢</div>
+              <div>
+                <div class="doc-name">Exam Schedule — November 2024 <span class="doc-tag tag-circ">CIRCULAR</span></div>
+                <div class="doc-meta">🏫 All Departments &nbsp; 📅 Oct 2024 &nbsp; 🏷 Version 1</div>
+                <div class="doc-progress" style="margin-top:5px">
+                  <div class="doc-progress-fill" style="width:67%;background:#7eb3ff"></div>
+                </div>
+              </div>
+            </div>
+            <div class="doc-right">
+              <span class="doc-match" style="color:#7eb3ff">67%</span>
+              <div class="doc-actions">
+                <button class="doc-btn">⚲ Preview</button>
+                <button class="doc-btn primary">⬇ Download</button>
+                <button class="doc-btn">⬛ QR</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section id="tech">
+    <div class="section-head reveal" style="text-align:center;max-width:560px;margin:0 auto 0">
+      <span class="section-tag">Technology Stack</span>
+      <h2 class="section-title">Built with the Best AI Tools</h2>
+      <p class="section-sub" style="margin:0 auto">Fully local, fully private — no data leaves your institution.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-pill reveal" style="transition-delay:.04s">
+        <div class="tech-pill-icon">⚛</div>
+        <div class="tech-pill-name">React.js</div>
+        <div class="tech-pill-type">Frontend</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.08s">
+        <div class="tech-pill-icon">🌬</div>
+        <div class="tech-pill-name">Tailwind CSS</div>
+        <div class="tech-pill-type">Styling</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.12s">
+        <div class="tech-pill-icon">⚡</div>
+        <div class="tech-pill-name">FastAPI</div>
+        <div class="tech-pill-type">Backend</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.16s">
+        <div class="tech-pill-icon">🦜</div>
+        <div class="tech-pill-name">LangChain</div>
+        <div class="tech-pill-type">RAG Pipeline</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.2s">
+        <div class="tech-pill-icon">🧠</div>
+        <div class="tech-pill-name">Ollama + Llama 3</div>
+        <div class="tech-pill-type">Local LLM</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.24s">
+        <div class="tech-pill-icon">🔷</div>
+        <div class="tech-pill-name">FAISS</div>
+        <div class="tech-pill-type">Vector DB</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.28s">
+        <div class="tech-pill-icon">🐘</div>
+        <div class="tech-pill-name">PostgreSQL</div>
+        <div class="tech-pill-type">Database</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.32s">
+        <div class="tech-pill-icon">🔤</div>
+        <div class="tech-pill-name">SentenceTransformers</div>
+        <div class="tech-pill-type">Embeddings</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.36s">
+        <div class="tech-pill-icon">👁</div>
+        <div class="tech-pill-name">Tesseract OCR</div>
+        <div class="tech-pill-type">OCR</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.4s">
+        <div class="tech-pill-icon">📄</div>
+        <div class="tech-pill-name">PyMuPDF</div>
+        <div class="tech-pill-type">PDF Processing</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.44s">
+        <div class="tech-pill-icon">🐳</div>
+        <div class="tech-pill-name">Docker</div>
+        <div class="tech-pill-type">Deployment</div>
+      </div>
+      <div class="tech-pill reveal" style="transition-delay:.48s">
+        <div class="tech-pill-icon">🔑</div>
+        <div class="tech-pill-name">JWT + Bcrypt</div>
+        <div class="tech-pill-type">Auth</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <div class="contact-left reveal-left">
+        <span class="section-tag">Contact</span>
+        <h2 class="section-title">Get in Touch</h2>
+        <p>Have questions about VidyaVault? Want to deploy it at your institution? Reach out to the team at IIST Indore.
+        </p>
+        <div class="contact-info-row">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-info-label">Address</div>
+            <div class="contact-info-val">IIST, Rau–Pithampur Road, Indore, MP</div>
+          </div>
+        </div>
+        <div class="contact-info-row">
+          <div class="contact-icon">📧</div>
+          <div>
+            <div class="contact-info-label">Email</div>
+            <div class="contact-info-val">vidyavault@iist.ac.in</div>
+          </div>
+        </div>
+        <div class="contact-info-row">
+          <div class="contact-icon">👤</div>
+          <div>
+            <div class="contact-info-label">Project Author</div>
+            <div class="contact-info-val">Nishita Kanojiya — Minor Project, 2024–25</div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal-right">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Your Name</label><input class="form-input"
+              placeholder="Priya Sharma"></div>
+          <div class="form-group"><label class="form-label">Email / ID</label><input class="form-input"
+              placeholder="priya@iist.ac.in"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Role</label><select class="form-input" style="cursor:pointer">
+            <option>Student</option>
+            <option>Faculty</option>
+            <option>Administrator</option>
+            <option>Other Institution</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Message</label><textarea class="form-input"
+            placeholder="Tell us what you need..."></textarea></div>
+        <button class="form-submit">Send Message →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="nav-brand" style="margin-bottom:12px">
+          <div class="nav-logo">VV</div>
+          <div class="nav-name">Vidya<span>Vault</span></div>
+        </div>
+        <div class="footer-brand-desc">AI-powered document management for IIST Indore. Built with LangChain, Ollama,
+          FAISS, and FastAPI. Minor Project 2024–25 by Nishita Kanojiya.</div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Platform</div>
+        <a href="#features">Features</a>
+        <a href="#how">How It Works</a>
+        <a href="#access">Access Levels</a>
+        <a href="#dashboard">Dashboard</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Technology</div>
+        <a href="#">LangChain RAG</a>
+        <a href="#">Ollama LLM</a>
+        <a href="#">FAISS Vector DB</a>
+        <a href="#">Tesseract OCR</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Project</div>
+        <a href="D:\Minor Project\frontend\Nishita kanojiya-PRD.pdf">PRD Document</a>
+        <a href="#">GitHub Repo</a>
+        <a href="#contact">Contact Team</a>
+        <a href="#">IIST Website</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 VidyaVault · Indore Institute of Science & Technology</span>
+      <span> Project by <strong style="color:var(--gold)">Nishita Kanojiya , Udit Rathod</strong> · Guide: Vibhav
+        Jain</span>
+    </div>
+  </footer>
+
+  <!-- CHATBOT FAB -->
+  <button id="vv-chat-fab" onclick="toggleChat()" aria-label="Open VidyaVault AI">
+    <div id="vv-chat-badge">1</div>
+    <svg id="vv-fab-open" viewBox="0 0 24 24">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6v-2h12v2zm0-3H6V7h12v2z" />
+    </svg>
+    <svg id="vv-fab-close" viewBox="0 0 24 24" style="display:none">
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+    </svg>
+  </button>
+
+  <!-- CHATBOX -->
+  <div id="vv-chatbox">
+    <div class="vv-chat-header">
+      <div class="vv-chat-avatar">VV</div>
+      <div>
+        <div class="vv-chat-hname">VidyaVault AI</div>
+        <div class="vv-chat-hstatus">
+          <div class="vv-live-dot"></div>RAG Agent · IIST Document Library
+        </div>
+      </div>
+      <button class="vv-chat-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="vv-chat-chips">
+      <div class="vv-chip" onclick="sendChip(this)" data-q="Find 2024 CS question paper">📄 Question Papers</div>
+      <div class="vv-chip" onclick="sendChip(this)" data-q="Show B.Tech syllabus">📘 Syllabus</div>
+      <div class="vv-chip" onclick="sendChip(this)" data-q="Latest circulars">📢 Circulars</div>
+      <div class="vv-chip" onclick="sendChip(this)" data-q="Fee certificate format">📜 Certificates</div>
+    </div>
+    <div class="vv-chat-msgs" id="vv-msgs"></div>
+    <div class="vv-chat-input-row">
+      <textarea id="vv-input" placeholder="Ask about any document..." rows="1"></textarea>
+      <button id="vv-send" onclick="sendMsg()">
+        <svg viewBox="0 0 24 24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+        </svg>
+      </button>
+    </div>
+    <div class="vv-chat-footer">Powered by <span>Ollama + FAISS RAG</span> · IIST Library</div>
+  </div>
+
+  <!-- PARTICLES -->
+  <canvas id="particleCanvas" style="position:fixed;top:0;left:0;pointer-events:none;z-index:0;opacity:.4"></canvas>
+
+  <script>
+    // ── CURSOR ──
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx - 5 + 'px'; cur.style.top = my - 5 + 'px' });
+    setInterval(() => { rx += (mx - rx) * .15; ry += (my - ry) * .15; ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px' }, 16);
+    document.querySelectorAll('a,button,.feat-card,.role-card,.step-item').forEach(el => {
+      el.addEventListener('mouseenter', () => { cur.classList.add('expand'); ring.classList.add('expand') });
+      el.addEventListener('mouseleave', () => { cur.classList.remove('expand'); ring.classList.remove('expand') });
+    });
+
+    // ── NAV SCROLL ──
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', scrollY > 60);
+    });
+
+    // ── SCROLL REVEAL ──
+    const obs = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    }), { threshold: .12 });
+    document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => obs.observe(el));
+
+    // ── PARTICLE CANVAS ──
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+    const particles = Array.from({ length: 60 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - .5) * .3, vy: -Math.random() * .4 - .1, size: Math.random() * 2 + .5, opacity: Math.random() * .5 + .1 }));
+    function animParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -10) p.y = canvas.height + 10;
+        if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(201,151,58,${p.opacity})`; ctx.fill();
+      });
+      requestAnimationFrame(animParticles);
+    }
+    animParticles();
+
+    // ── TYPEWRITER ──
+    const phrases = ['Under 3 Seconds', 'With Plain English', 'Without Any Staff', 'Available 24 × 7'];
+    let pi = 0, ci = 0, del = false;
+    const el = document.getElementById('hero-typed');
+    function typeLoop() {
+      const ph = phrases[pi];
+      if (!del) {
+        el.textContent = ph.substring(0, ci + 1); ci++;
+        if (ci === ph.length) { del = true; setTimeout(typeLoop, 1800); return; }
+      } else {
+        el.textContent = ph.substring(0, ci - 1); ci--;
+        if (ci === 0) { del = false; pi = (pi + 1) % phrases.length; }
+      }
+      setTimeout(typeLoop, del ? 55 : 90);
+    }
+    setTimeout(typeLoop, 2000);
+
+    // ── PROGRESS BARS ANIMATE ──
+    const progressObs = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) e.target.querySelectorAll('.doc-progress-fill').forEach(b => { b.style.width = b.style.width || '0%'; });
+    }), { threshold: .3 });
+    document.querySelectorAll('.dash-wrap').forEach(el => progressObs.observe(el));
+
+    // ── CHATBOT ──
+    let chatOpen = false, chatWelcomed = false, chatBusy = false;
+    const N8N_WEBHOOK = 'https://your-n8n-instance.com/webhook/vidyavault-rag';
+    const sessionId = 'vv-' + Math.random().toString(36).slice(2, 9);
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('vv-chatbox').classList.toggle('open', chatOpen);
+      document.getElementById('vv-fab-open').style.display = chatOpen ? 'none' : 'block';
+      document.getElementById('vv-fab-close').style.display = chatOpen ? 'block' : 'none';
+      document.getElementById('vv-chat-badge').style.display = 'none';
+      if (chatOpen && !chatWelcomed) { chatWelcomed = true; setTimeout(showWelcome, 350); }
+      if (chatOpen) setTimeout(() => document.getElementById('vv-input').focus(), 350);
+    }
+
+    function showWelcome() {
+      addBotMsg("Hello! I'm the **VidyaVault AI Assistant** for IIST Indore.\n\nI can help you find:\n• Question papers & syllabi\n• Exam schedules & circulars\n• Fee certificates & notices\n\nJust ask in plain English — I'll search the library instantly.", ['IIST Document Library']);
+    }
+
+    function addBotMsg(text, sources) {
+      const msgs = document.getElementById('vv-msgs');
+      const wrap = document.createElement('div'); wrap.className = 'vv-msg bot';
+      const av = document.createElement('div'); av.className = 'vv-msg-av vv-bot-av'; av.textContent = 'VV';
+      const bub = document.createElement('div'); bub.className = 'vv-bubble';
+      bub.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/•/g, '•').replace(/\n/g, '<br>');
+      if (sources && sources.length) {
+        const sr = document.createElement('div'); sr.className = 'vv-src-tags';
+        sources.forEach(s => { const t = document.createElement('span'); t.className = 'vv-src'; t.textContent = '📄 ' + s; sr.appendChild(t); });
+        bub.appendChild(sr);
+      }
+      wrap.appendChild(av); wrap.appendChild(bub); msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function addUserMsg(text) {
+      const msgs = document.getElementById('vv-msgs');
+      const wrap = document.createElement('div'); wrap.className = 'vv-msg user';
+      const av = document.createElement('div'); av.className = 'vv-msg-av vv-user-av'; av.textContent = '🎓';
+      const bub = document.createElement('div'); bub.className = 'vv-bubble'; bub.textContent = text;
+      wrap.appendChild(av); wrap.appendChild(bub); msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showTyping() {
+      const msgs = document.getElementById('vv-msgs');
+      const wrap = document.createElement('div'); wrap.className = 'vv-msg bot'; wrap.id = 'vv-typing-row';
+      const av = document.createElement('div'); av.className = 'vv-msg-av vv-bot-av'; av.textContent = 'VV';
+      const dots = document.createElement('div'); dots.className = 'vv-typing'; dots.innerHTML = '<span></span><span></span><span></span>';
+      wrap.appendChild(av); wrap.appendChild(dots); msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    function hideTyping() { const t = document.getElementById('vv-typing-row'); if (t) t.remove(); }
+
+    async function sendMsg() {
+      const inp = document.getElementById('vv-input');
+      const txt = inp.value.trim();
+      if (!txt || chatBusy) return;
+      chatBusy = true;
+      document.getElementById('vv-send').disabled = true;
+      addUserMsg(txt); inp.value = ''; inp.style.height = 'auto';
+      showTyping();
+      try {
+        const res = await fetch(N8N_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt, sessionId, context: 'IIST Indore Document Library' }) });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const reply = data.output || data.response || data.text || JSON.stringify(data);
+        const sources = Array.isArray(data.sources) ? data.sources : [];
+        hideTyping(); addBotMsg(reply, sources);
+      } catch (e) {
+        hideTyping();
+        addBotMsg("I couldn't reach the VidyaVault knowledge base right now.\n\nPlease connect your **n8n webhook** URL to make me fully functional.\n\nFor demo: try the search bar in the dashboard above!", []);
+      } finally { chatBusy = false; document.getElementById('vv-send').disabled = false; inp.focus(); }
+    }
+
+    function sendChip(el) {
+      const q = el.dataset.q;
+      document.getElementById('vv-input').value = q;
+      sendMsg();
+    }
+
+    document.getElementById('vv-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+    });
+    document.getElementById('vv-input').addEventListener('input', function () {
+      this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 90) + 'px';
+    });
+
+    // Show badge after 4s
+    setTimeout(() => { if (!chatOpen) document.getElementById('vv-chat-badge').style.display = 'flex'; }, 4000);
+
+    // ── COUNTER ANIMATION ──
+    function animateCount(el, target, suffix) {
+      let start = 0; const dur = 1800; const step = target / 60;
+      const timer = setInterval(() => { start += step; if (start >= target) { el.textContent = suffix ? target + suffix : target; clearInterval(timer); } else { el.textContent = Math.floor(start) + (suffix || ''); } }, dur / 60);
+    }
+    const counterObs = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting && !e.target.dataset.counted) {
+        e.target.dataset.counted = '1';
+      }
+    }), { threshold: .5 });
+    document.querySelectorAll('.stat-num').forEach(el => counterObs.observe(el));
+  </script>
+</body>
+
+</html>
