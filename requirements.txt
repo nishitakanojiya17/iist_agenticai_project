@@ -1,0 +1,8 @@
+# RAG Pipeline — Python dependencies
+# Install with:  pip install -r requirements.txt
+
+sentence-transformers==2.7.0
+faiss-cpu==1.8.0
+pdfplumber==0.11.0
+requests==2.32.3
+numpy>=1.24,<2.0
