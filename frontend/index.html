@@ -2685,7 +2685,7 @@
 
     // ── CHATBOT ──
     let chatOpen = false, chatWelcomed = false, chatBusy = false;
-    const N8N_WEBHOOK = 'https://your-n8n-instance.com/webhook/vidyavault-rag';
+    const FASTAPI_URL = 'http://localhost:8000/api/query';
     const sessionId = 'vv-' + Math.random().toString(36).slice(2, 9);
 
     function toggleChat() {
@@ -2745,7 +2745,7 @@
       addUserMsg(txt); inp.value = ''; inp.style.height = 'auto';
       showTyping();
       try {
-        const res = await fetch(N8N_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt, sessionId, context: 'IIST Indore Document Library' }) });
+        const res = await fetch(FASTAPI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: txt }) });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         const reply = data.output || data.response || data.text || JSON.stringify(data);
@@ -2753,7 +2753,7 @@
         hideTyping(); addBotMsg(reply, sources);
       } catch (e) {
         hideTyping();
-        addBotMsg("I couldn't reach the VidyaVault knowledge base right now.\n\nPlease connect your **n8n webhook** URL to make me fully functional.\n\nFor demo: try the search bar in the dashboard above!", []);
+        addBotMsg("I couldn't reach the backend API.\n\nPlease ensure your **FastAPI backend (uvicorn)** is running on port 8000 and Ollama is serving the llama3 model.", []);
       } finally { chatBusy = false; document.getElementById('vv-send').disabled = false; inp.focus(); }
     }
 
